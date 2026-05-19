@@ -73,12 +73,28 @@ graph LR
 
 ### Vercel 环境变量（必须配齐）
 
+**基础（必须）：**
+
 | Key | Value | 用途 |
 |-----|-------|------|
 | `GITHUB_TOKEN` | `ghp_xxxxxxxx` | 读写 waline-data 仓库 |
 | `GITHUB_REPO` | `Xynrin/waline-data` | 数据仓库路径 |
 | `GITHUB_PATH` | `comments` | 数据仓库内子目录 |
 | `SITE_URL` | `https://xynrin.github.io` | 防止反垃圾 |
+| `JWT_TOKEN` | 32+ 位随机字符串 | session 签名密钥（少了 OAuth 登录会 500） |
+| `AUTHOR_EMAIL` | `xynrin@163.com` | 标识博主身份（评论会有特殊标记） |
+| `SECURE_DOMAINS` | `xynrin.github.io` | 评论可信域名 |
+
+**可选（要 GitHub 登录管理后台才需要）：**
+
+| Key | Value | 用途 |
+|-----|-------|------|
+| `GITHUB_CLIENT_ID` | OAuth App Client ID | GitHub 登录 |
+| `GITHUB_CLIENT_SECRET` | OAuth App Client Secret | GitHub 登录 |
+
+GitHub OAuth App 创建：https://github.com/settings/developers → New OAuth App
+- Homepage URL: `https://xynrin.github.io`
+- Authorization callback URL: `https://pinglun-blog.vercel.app/api/oauth/github`
 
 **Token 在哪里生成**：
 - https://github.com/settings/tokens/new
