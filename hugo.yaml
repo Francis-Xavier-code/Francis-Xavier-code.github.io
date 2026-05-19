@@ -77,7 +77,7 @@ params:
     enabled: true
     provider: waline
     waline:
-      serverURL: ""  # TODO: 填入 Waline 后端地址，例如 https://your-waline.vercel.app
+      serverURL: https://pinglun-blog.vercel.app
       pageview: true
       emoji:
         - https://unpkg.com/@waline/emojis@1.1.0/weibo
