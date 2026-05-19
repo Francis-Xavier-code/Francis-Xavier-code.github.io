@@ -165,6 +165,16 @@ graph LR
 
 **文章内容**采用 [知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议（CC BY-NC-SA 4.0）](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh) 授权。
 
+## 📚 文档
+
+| 文档 | 内容 |
+|------|------|
+| [部署文档](./docs/DEPLOY.md) | 从零搭建博客的完整流程（环境 / 仓库 / Pages / Vercel / Waline 全套） |
+| [维护文档](./docs/MAINTAIN.md) | 日常维护清单 + 常用网站速查表 + 故障排查 |
+| [架构文档](./docs/ARCHITECTURE.md) | 技术选型 / 数据流 / 关键设计决策 |
+
+> 💡 想知道点哪个网站维护博客？看 [维护文档 → 第三方账号一览](./docs/MAINTAIN.md#-第三方账号一览)。
+
 <div align="center">
 
 ---

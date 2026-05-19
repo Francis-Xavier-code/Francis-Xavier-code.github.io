@@ -5,12 +5,12 @@
 import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
 init({
     el: '#waline',
-    serverURL: {{ $cfg.serverURL | jsonify }},
+    serverURL: {{ $cfg.serverURL | jsonify | safeJS }},
     path: window.location.pathname,
     pageview: {{ $cfg.pageview | default true }},
-    lang: {{ $cfg.lang | default "zh-CN" | jsonify }},
-    emoji: {{ $cfg.emoji | jsonify }},
-    requiredMeta: {{ $cfg.requiredMeta | jsonify }},
+    lang: {{ $cfg.lang | default "zh-CN" | jsonify | safeJS }},
+    emoji: {{ $cfg.emoji | jsonify | safeJS }},
+    requiredMeta: {{ $cfg.requiredMeta | jsonify | safeJS }},
     reaction: true,
     locale: {
         placeholder: '欢迎留言（支持 Markdown）'
