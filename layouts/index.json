@@ -7,7 +7,7 @@
     "date": {{ .Date.Format "2006-01-02" | jsonify }},
     "permalink": {{ .Permalink | jsonify }},
     "description": {{ .Description | jsonify }},
-    "content": {{ .Plain | jsonify }},
+    "content": {{ .Plain | truncate 800 "" | jsonify }},
     "image": {{ with .Params.image }}{{ . | jsonify }}{{ else }}""{{ end }},
     "categories": {{ .Params.categories | jsonify }},
     "tags": {{ .Params.tags | jsonify }}
