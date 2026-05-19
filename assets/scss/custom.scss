@@ -727,6 +727,7 @@ kbd {
 }
 
 /* ============ 灯箱预览 ============ */
+.lightbox[hidden] { display: none !important; }
 .lightbox {
     position: fixed;
     inset: 0;

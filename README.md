@@ -64,26 +64,22 @@
 ## 📊 站点统计
 
 <p align="center">
-  <img alt="README views" src="https://visitor-badge.laobi.icu/badge?page_id=Xynrin.Xynrin.github.io.readme&left_text=README%20浏览&left_color=00b8d4&right_color=ff2d92" />
-  <img alt="Profile views" src="https://visitor-badge.laobi.icu/badge?page_id=Xynrin.Xynrin.github.io.profile&left_text=仓库浏览&left_color=7c5cff&right_color=00e5a0" />
+  <img alt="README views" src="https://visitor-badge.laobi.icu/badge?page_id=Xynrin.Xynrin.github.io.readme&left_text=README+Views&left_color=00b8d4&right_color=ff2d92" />
+  <img alt="Repo views" src="https://visitor-badge.laobi.icu/badge?page_id=Xynrin.Xynrin.github.io.profile&left_text=Repo+Views&left_color=7c5cff&right_color=00e5a0" />
 </p>
 
 <p align="center">
   <img alt="Stars" src="https://img.shields.io/github/stars/Xynrin/Xynrin.github.io?style=for-the-badge&color=ff2d92&logo=github" />
   <img alt="Forks" src="https://img.shields.io/github/forks/Xynrin/Xynrin.github.io?style=for-the-badge&color=00b8d4&logo=github" />
   <img alt="Issues" src="https://img.shields.io/github/issues/Xynrin/Xynrin.github.io?style=for-the-badge&color=7c5cff&logo=github" />
-  <img alt="Commit activity" src="https://img.shields.io/github/commit-activity/m/Xynrin/Xynrin.github.io?style=for-the-badge&color=00e5a0&label=月提交" />
+  <img alt="Commit activity" src="https://img.shields.io/github/commit-activity/m/Xynrin/Xynrin.github.io?style=for-the-badge&color=00e5a0" />
 </p>
 
 <p align="center">
-  <img alt="Created at" src="https://img.shields.io/github/created-at/Xynrin/Xynrin.github.io?style=flat-square&label=诞生于&color=00b8d4" />
-  <img alt="Last commit" src="https://img.shields.io/github/last-commit/Xynrin/Xynrin.github.io?style=flat-square&label=最近活跃&color=ff2d92" />
-  <img alt="Repo size" src="https://img.shields.io/github/repo-size/Xynrin/Xynrin.github.io?style=flat-square&label=仓库体积&color=7c5cff" />
-  <img alt="Code size" src="https://img.shields.io/github/languages/code-size/Xynrin/Xynrin.github.io?style=flat-square&label=代码体积&color=00e5a0" />
-</p>
-
-<p align="center">
-  <img alt="Site PV/UV" src="https://img.shields.io/badge/全站_PV/UV-请访问站点底部查看-1f6feb?style=for-the-badge&logo=googleanalytics&logoColor=white" />
+  <img alt="Created at" src="https://img.shields.io/github/created-at/Xynrin/Xynrin.github.io?style=flat-square&color=00b8d4" />
+  <img alt="Last commit" src="https://img.shields.io/github/last-commit/Xynrin/Xynrin.github.io?style=flat-square&color=ff2d92" />
+  <img alt="Repo size" src="https://img.shields.io/github/repo-size/Xynrin/Xynrin.github.io?style=flat-square&color=7c5cff" />
+  <img alt="Code size" src="https://img.shields.io/github/languages/code-size/Xynrin/Xynrin.github.io?style=flat-square&color=00e5a0" />
 </p>
 
 > 上方所有徽章数据均**实时**：README/仓库浏览次数会随访问递增，GitHub 数据每几分钟刷新一次。
