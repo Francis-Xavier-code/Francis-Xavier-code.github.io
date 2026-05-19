@@ -667,3 +667,108 @@ kbd {
     .hero-banner { padding: 2.5rem 1.2rem; }
     .sidebar-banner img { max-width: 160px; }
 }
+
+/* ============ 文章返回导航 ============ */
+.article-back-nav {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+.article-back-btn,
+.article-home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: var(--card-background);
+    color: var(--card-text-color-main);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-l1);
+    border: 1px solid transparent;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    svg { width: 16px; height: 16px; }
+}
+.article-back-btn:hover,
+.article-home-btn:hover {
+    transform: translateX(-2px);
+    border-color: rgba(0, 217, 255, 0.3);
+    color: var(--accent-color);
+    box-shadow: var(--shadow-l2);
+}
+.article-home-btn:hover { transform: translateY(-2px); }
+
+/* ============ 左栏 banner（纯图片，按钮重置） ============ */
+.sidebar-banner--image {
+    display: block;
+    margin-top: auto;
+    padding: 1rem;
+    border: none;
+    background: transparent;
+    cursor: zoom-in;
+    width: 100%;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    &:hover {
+        transform: translateY(-2px);
+        filter: drop-shadow(0 6px 16px rgba(0, 217, 255, 0.4));
+    }
+    img {
+        display: block;
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: var(--shadow-l1);
+    }
+}
+
+/* ============ 灯箱预览 ============ */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: lightbox-fade 0.25s ease;
+    cursor: zoom-out;
+    img {
+        max-width: 90vw;
+        max-height: 90vh;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        animation: lightbox-zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .lightbox-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        color: white;
+        font-size: 26px;
+        line-height: 1;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        &:hover {
+            background: var(--gradient-accent);
+            transform: scale(1.1) rotate(90deg);
+        }
+    }
+}
+@keyframes lightbox-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lightbox-zoom {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

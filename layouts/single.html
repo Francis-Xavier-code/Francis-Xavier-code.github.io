@@ -19,13 +19,26 @@
 {{ end }}
 
 {{ define "main" }}
+    {{/* 返回按钮 */}}
+    <nav class="article-back-nav">
+        <a href="javascript:history.length>1?history.back():location.href='{{ .Site.Home.RelPermalink }}'"
+           class="article-back-btn"
+           title="返回">
+            {{ partial "helper/icon" "arrow-back" }}
+            <span>返回</span>
+        </a>
+        <a href="{{ .Site.Home.RelPermalink }}" class="article-home-btn" title="首页">
+            {{ partial "helper/icon" "home" }}
+            <span>首页</span>
+        </a>
+    </nav>
+
     {{ partial "article/article.html" . }}
 
     {{ if .Params.links }}
         {{ partial "article/components/links" . }}
     {{ end }}
 
-    {{/* 打赏 */}}
     {{ if and .Site.Params.reward.enabled (ne .Params.reward false) }}
         {{ partial "article/components/reward" . }}
     {{ end }}

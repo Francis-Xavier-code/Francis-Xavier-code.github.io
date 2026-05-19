@@ -1,4 +1,4 @@
-{{/* 自定义左栏：在主题原版基础上，最底部新增 banner */}}
+{{/* 自定义左栏：在主题原版基础上，最底部新增 banner 图片（点击放大预览） */}}
 <aside class="sidebar left-sidebar sticky {{ if .Site.Params.sidebar.compact }}compact{{ end }}">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="{{ T `toggleMenu` }}">
         <span class="hamburger-box">
@@ -94,13 +94,34 @@
         </li>
     </ol>
 
-    {{/* ===== 左栏底部 Banner ===== */}}
+    {{/* ===== 左栏底部 Banner（纯图片，点击放大） ===== */}}
     {{- with .Site.Params.sidebarBanner -}}
         {{- $banner := partial "helper/image" (dict "Image" .image "Resources" resources "Context" $) -}}
         {{- with $banner -}}
-            <a class="sidebar-banner" {{ with $.Site.Params.sidebarBanner.link }}href="{{ . }}" target="_blank" rel="noopener"{{ end }}>
+            <button type="button" class="sidebar-banner sidebar-banner--image" data-src="{{ .Permalink }}" aria-label="查看大图">
                 <img src="{{ .Permalink }}" alt="banner" loading="lazy" />
-            </a>
+            </button>
         {{- end -}}
     {{- end -}}
 </aside>
+
+{{/* 灯箱：点击 banner 后弹出 */}}
+<div class="lightbox" id="sidebar-lightbox" hidden>
+    <button class="lightbox-close" type="button" aria-label="关闭">×</button>
+    <img alt="预览" />
+</div>
+<script>
+(function(){
+    const triggers = document.querySelectorAll('.sidebar-banner--image');
+    const box = document.getElementById('sidebar-lightbox');
+    if (!triggers.length || !box) return;
+    const img = box.querySelector('img');
+    const closeBtn = box.querySelector('.lightbox-close');
+    function open(src){ img.src = src; box.hidden = false; document.body.style.overflow = 'hidden'; }
+    function close(){ box.hidden = true; document.body.style.overflow = ''; img.src = ''; }
+    triggers.forEach(t => t.addEventListener('click', () => open(t.dataset.src)));
+    closeBtn.addEventListener('click', close);
+    box.addEventListener('click', (e) => { if (e.target === box) close(); });
+    document.addEventListener('keydown', (e) => { if (!box.hidden && e.key === 'Escape') close(); });
+})();
+</script>

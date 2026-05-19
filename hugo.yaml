@@ -35,7 +35,6 @@ params:
 
   sidebarBanner:
     image: img/my-linux-do.png
-    link: https://linux.do/u/xynrin/
 
   since: "2026-05-19"
 
@@ -128,7 +127,13 @@ params:
       enabled: true
 
 menu:
-  main: []
+  main:
+    - identifier: home
+      name: 首页
+      url: /
+      weight: -100
+      params:
+        icon: home
   social:
     - identifier: github
       name: GitHub
