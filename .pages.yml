@@ -1,0 +1,92 @@
+media:
+  input: static/img
+  output: /img
+
+content:
+  - name: posts
+    label: 文章
+    type: collection
+    path: content/post
+    subfolder: true
+    view:
+      fields: [title, date, categories, tags]
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    filename: '{primary}/index.md'
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+      - name: date
+        label: 发布时间
+        type: date
+        options:
+          format: yyyy-MM-dd
+        required: true
+      - name: slug
+        label: URL slug
+        type: string
+      - name: description
+        label: 摘要
+        type: text
+      - name: image
+        label: 封面图
+        type: image
+      - name: categories
+        label: 分类
+        type: select
+        options:
+          multiple: true
+          creatable: true
+          values:
+            - 随笔
+            - 技术
+            - 项目
+            - 生活
+      - name: tags
+        label: 标签
+        type: string
+        list: true
+      - name: draft
+        label: 草稿
+        type: boolean
+        default: false
+      - name: body
+        label: 正文
+        type: rich-text
+
+  - name: about
+    label: 关于页
+    type: file
+    path: content/about/index.md
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+      - name: description
+        label: 描述
+        type: text
+      - name: body
+        label: 正文
+        type: rich-text
+
+  - name: config
+    label: 站点配置
+    type: file
+    path: hugo.yaml
+    format: yaml
+    fields:
+      - name: title
+        label: 站点标题
+        type: string
+      - name: baseURL
+        label: BaseURL
+        type: string
+
+settings:
+  content:
+    merge: false
