@@ -5,6 +5,20 @@ hasCJKLanguage: true
 title: XYNRIN-BLOG
 theme: hugo-theme-stack
 
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+  page:
+    - HTML
+
+outputFormats:
+  JSON:
+    mediaType: application/json
+    baseName: index
+    isPlainText: true
+
 pagination:
   pagerSize: 6
 
@@ -19,9 +33,13 @@ params:
   rssFullContent: true
   favicon: img/favicon.png
 
+  mainBanner:
+    image: img/my-linux-do.png
+    link: https://linux.do/u/xynrin/
+
   footer:
     since: 2026
-    customText: ""
+    customText: '本站源码遵循 <a href="https://github.com/Xynrin/Xynrin.github.io/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a> 协议开源'
 
   dateFormat:
     published: 2006-01-02
@@ -87,6 +105,16 @@ menu:
       url: https://github.com/Xynrin
       params:
         icon: brand-github
+    - identifier: linuxdo
+      name: Linux.do
+      url: https://linux.do/u/xynrin/
+      params:
+        icon: brand-linuxdo
+    - identifier: email
+      name: Email
+      url: mailto:xynrin@163.com
+      params:
+        icon: mail
 
 related:
   includeNewer: true

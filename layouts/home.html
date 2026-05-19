@@ -1,0 +1,25 @@
+{{ define "main" }}
+    {{- $paginator := partial "helper/paginator.html" . -}}
+
+    {{- with .Site.Params.mainBanner -}}
+        {{- $banner := partial "helper/image" (dict "Image" .image "Resources" resources "Context" $) -}}
+        {{- with $banner -}}
+            <a class="main-banner" {{ with $.Site.Params.mainBanner.link }}href="{{ . }}" target="_blank" rel="noopener"{{ end }}>
+                <img src="{{ .Permalink }}" alt="banner" loading="lazy" />
+            </a>
+        {{- end -}}
+    {{- end -}}
+
+    <section class="article-list">
+        {{ range $index, $element := $paginator.Pages }}
+            {{ partial "article-list/default" . }}
+        {{ end }}
+    </section>
+
+    {{- partial "pagination.html" . -}}
+    {{- partial "footer/footer" . -}}
+{{ end }}
+
+{{ define "right-sidebar" }}
+    {{ partial "sidebar/right.html" (dict "Context" . "Scope" "homepage") }}
+{{ end }}

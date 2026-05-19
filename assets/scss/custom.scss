@@ -1,0 +1,296 @@
+/* ============ XYNRIN-BLOG · Cyber Aesthetic ============ */
+
+/* 字体导入：Inter + JetBrains Mono + 思源黑体（CDN，免许可） */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+/* ============ 主色调（霓虹青 + 品红） ============ */
+:root {
+    --accent-color: #00d9ff;
+    --accent-color-darker: #0099cc;
+    --body-text-color: #2c2e35;
+    --card-background: #ffffff;
+    --card-background-selected: #f6f8ff;
+    --card-text-color-main: #1a1d23;
+    --card-text-color-secondary: #6b7280;
+    --card-text-color-tertiary: #9ca3af;
+    --body-background: #f4f6fb;
+    --gradient-accent: linear-gradient(135deg, #00d9ff 0%, #ff2d92 100%);
+    --gradient-soft: linear-gradient(135deg, rgba(0, 217, 255, 0.08) 0%, rgba(255, 45, 146, 0.08) 100%);
+}
+
+[data-scheme="dark"] {
+    --accent-color: #00e5ff;
+    --accent-color-darker: #00b8d4;
+    --body-text-color: #c9d1d9;
+    --card-background: #16181d;
+    --card-background-selected: #1d2027;
+    --card-text-color-main: #e8eaed;
+    --card-text-color-secondary: #8b95a7;
+    --card-text-color-tertiary: #5f6675;
+    --body-background: #0d0f14;
+    --gradient-accent: linear-gradient(135deg, #00e5ff 0%, #ff3d9a 100%);
+    --gradient-soft: linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(255, 61, 154, 0.1) 100%);
+    --shadow-l1: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-l2: 0 8px 32px rgba(0, 229, 255, 0.15);
+    --shadow-l3: 0 12px 48px rgba(0, 229, 255, 0.2);
+}
+
+/* ============ 字体 ============ */
+:root {
+    --sys-sans-serif: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --base-font-family: var(--sys-sans-serif);
+    --code-font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+}
+
+body {
+    font-family: var(--base-font-family);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: 0.01em;
+}
+
+code, pre, kbd {
+    font-family: var(--code-font-family);
+    font-variant-ligatures: contextual;
+}
+
+/* ============ 站点标题：霓虹渐变 ============ */
+.site-name a {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    transition: filter 0.3s ease;
+
+    &:hover {
+        filter: drop-shadow(0 0 8px rgba(0, 217, 255, 0.5));
+    }
+}
+
+/* ============ 首页 banner：渐变光效 + 圆角 ============ */
+.main-banner {
+    display: block;
+    position: relative;
+    margin-bottom: var(--card-separation);
+    border-radius: var(--card-border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-l1);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--gradient-soft);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+    }
+
+    &:hover {
+        transform: translateY(-4px) scale(1.005);
+        box-shadow: var(--shadow-l3);
+
+        &::after {
+            opacity: 1;
+        }
+    }
+
+    img {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+}
+
+/* ============ 文章卡片：悬浮发光 ============ */
+.article-list > article {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    border: 1px solid transparent;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-l3);
+        border-color: rgba(0, 217, 255, 0.15);
+    }
+}
+
+[data-scheme="dark"] .article-list > article:hover {
+    border-color: rgba(0, 229, 255, 0.25);
+}
+
+.article-list .article-title a {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0 1.5px;
+    transition: background-size 0.35s ease;
+
+    &:hover {
+        background-size: 100% 1.5px;
+        color: var(--accent-color);
+    }
+}
+
+/* ============ 头像：呼吸 + 旋转 ============ */
+.site-avatar {
+    position: relative;
+}
+
+.site-avatar .site-logo {
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.4s ease;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.site-avatar:hover .site-logo {
+    transform: rotate(-8deg) scale(1.06);
+    filter: drop-shadow(0 0 12px rgba(0, 217, 255, 0.5));
+}
+
+.site-avatar::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: var(--gradient-accent);
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.4s ease;
+}
+
+.site-avatar:hover::before {
+    opacity: 0.6;
+}
+
+/* ============ 社交图标：彩色悬停 ============ */
+.menu-social a {
+    transition: transform 0.3s ease, color 0.3s ease, filter 0.3s ease;
+
+    &:hover {
+        transform: translateY(-3px);
+        color: var(--accent-color);
+        filter: drop-shadow(0 4px 8px rgba(0, 217, 255, 0.4));
+    }
+}
+
+/* ============ 主菜单：高亮态发光 ============ */
+.main-menu li.current a {
+    background: var(--gradient-soft);
+    box-shadow: 0 0 0 1px rgba(0, 217, 255, 0.2);
+}
+
+/* ============ 文章正文：链接美化 ============ */
+.article-content a:not(.article-list--tile a) {
+    color: var(--accent-color);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent-color), var(--accent-color));
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    transition: background-size 0.3s ease;
+
+    &:hover {
+        background-size: 100% 2px;
+    }
+}
+
+/* ============ 代码块：圆角 + 边框 ============ */
+.article-content pre {
+    border-radius: 12px;
+    border: 1px solid rgba(127, 127, 127, 0.12);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+[data-scheme="dark"] .article-content pre {
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.article-content :not(pre) > code {
+    background: var(--gradient-soft);
+    border: 1px solid rgba(0, 217, 255, 0.15);
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+    font-size: 0.88em;
+    color: var(--accent-color);
+}
+
+/* ============ 引用块：左侧渐变线 ============ */
+.article-content blockquote {
+    border-left: 3px solid;
+    border-image: var(--gradient-accent) 1;
+    background: var(--gradient-soft);
+    border-radius: 0 8px 8px 0;
+    padding: 0.8em 1.2em;
+}
+
+/* ============ Footer ============ */
+.site-footer {
+    .copyright {
+        font-weight: 500;
+        letter-spacing: 0.02em;
+    }
+
+    .powerby a {
+        color: var(--accent-color);
+        text-decoration: none;
+        border-bottom: 1px dashed currentColor;
+        padding-bottom: 1px;
+        transition: filter 0.3s ease;
+
+        &:hover {
+            filter: brightness(1.2) drop-shadow(0 0 6px rgba(0, 217, 255, 0.4));
+        }
+    }
+}
+
+/* ============ 滚动条 ============ */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--accent-color), var(--accent-color-darker));
+    border-radius: 6px;
+    border: 2px solid var(--body-background);
+    background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gradient-accent);
+    background-clip: padding-box;
+    border: 2px solid var(--body-background);
+}
+
+/* ============ 选中文本 ============ */
+::selection {
+    background: var(--accent-color);
+    color: var(--body-background);
+}
+
+/* ============ 标签云 hover ============ */
+.tag-cloud-tags a:hover {
+    background: var(--gradient-accent);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
+}
+
+/* ============ 搜索框聚焦光晕 ============ */
+.search-form input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent-color), 0 4px 16px rgba(0, 217, 255, 0.2);
+}
+
+/* ============ 移动端微调 ============ */
+@media (max-width: 768px) {
+    .main-banner img {
+        max-height: 180px;
+        object-fit: cover;
+    }
+}
