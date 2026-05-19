@@ -17,6 +17,8 @@
   <img alt="GitHub Workflow" src="https://github.com/Xynrin/Xynrin.github.io/actions/workflows/hugo.yml/badge.svg" />
   <img alt="Last commit" src="https://img.shields.io/github/last-commit/Xynrin/Xynrin.github.io?style=flat-square" />
   <img alt="Repo size" src="https://img.shields.io/github/repo-size/Xynrin/Xynrin.github.io?style=flat-square" />
+  <img alt="Stars" src="https://img.shields.io/github/stars/Xynrin/Xynrin.github.io?style=flat-square" />
+  <img alt="Visitors" src="https://visitor-badge.laobi.icu/badge?page_id=Xynrin.Xynrin.github.io&left_text=访问" />
 </p>
 
 [🌐 Live Site](https://xynrin.github.io) · [📝 写文章](https://app.pagescms.org) · [🐧 Linux.do](https://linux.do/u/xynrin/) · [✉ Email](mailto:xynrin@163.com)
@@ -47,10 +49,26 @@
 | 🎨 主题 | [hugo-theme-stack](https://github.com/CaiJimmy/hugo-theme-stack) v4 |
 | ☁ 部署 | GitHub Actions → GitHub Pages（自动） |
 | 📝 后台 | [Pages CMS](https://pagescms.org) 网页可视化编辑 |
-| 🔍 搜索 | 主题内置全文搜索（JSON 索引） |
+| 🔍 搜索 | 自研 fzf 风格模糊搜索 + 键盘导航（`/` 聚焦 · ↑↓ · Enter） |
+| 💬 评论 | [Waline](https://waline.js.org/)（评论 + 点赞 + 浏览量） |
+| 📊 统计 | 不蒜子（PV/UV）+ Waline 单篇浏览量 |
 | 🌗 主题切换 | 跟随系统 / 手动切换 |
-| 📡 RSS | 全文订阅 |
-| 🌐 i18n | 中文（locale: zh-cn） |
+| 📡 RSS | 全文订阅 + 二维码 widget |
+| 🧮 公式 | KaTeX 自动渲染 |
+| 📈 图表 | Mermaid 自动识别 |
+| 🖼 图片 | PhotoSwipe 点击放大 |
+| ⏱ 运行时间 | 实时计时（精确到秒） |
+| 🚀 阅读体验 | 顶部进度条 / 回到顶部 / TOC 高亮 / 字数统计 |
+| 🎨 视觉 | 霓虹渐变 + 卡片色条循环 + Hero 大标语 + 故障 404 |
+
+## 📊 站点统计
+
+<p align="center">
+  <img alt="Site PV" src="https://img.shields.io/badge/动态-访问数据见站内-00b8d4?style=for-the-badge" />
+  <img alt="Site UV" src="https://img.shields.io/badge/独立访客-不蒜子统计-ff2d92?style=for-the-badge" />
+</p>
+
+> 实时数据见站点底部，由不蒜子（全站 PV/UV）+ Waline（单篇浏览量与点赞）双重统计。
 
 ## 🛠 本地开发
 
@@ -65,6 +83,14 @@ hugo server --buildDrafts
 # 新建一篇文章
 hugo new content post/your-post-name/index.md
 ```
+
+## ⚙ 配置 Waline 后端（一次性）
+
+1. Fork [Waline 模板仓库](https://github.com/walinejs/waline)
+2. 一键部署到 [Vercel](https://vercel.com)（免费）
+3. 在 Vercel 项目设置里添加环境变量：`LeanCloud APP ID / KEY / MASTER_KEY`（在 [LeanCloud](https://console.leancloud.cn) 创建免费应用）
+4. 把 Vercel 给的 URL 填到 `hugo.yaml` 的 `params.comments.waline.serverURL`
+5. 推送即生效
 
 ## ☁ 自动部署流程
 
@@ -81,24 +107,40 @@ graph LR
 
 ```
 .
-├── .github/workflows/   # GitHub Actions 部署工作流
-├── archetypes/          # 文章模板
-├── assets/              # 经 Hugo 处理的资源（头像/banner/样式）
-│   ├── icons/           # 自定义 SVG 图标
-│   ├── img/             # 图片资源
-│   └── scss/custom.scss # 自定义样式
-├── content/             # 所有文章和页面
-│   ├── about/           # 关于页
-│   ├── post/            # 文章
-│   ├── archives/        # 归档页
-│   └── search.md        # 搜索页
-├── layouts/             # 自定义模板（覆盖主题）
-├── static/              # 原样复制的静态文件
+├── .github/workflows/        # GitHub Actions 部署工作流
+├── archetypes/               # 文章模板
+├── assets/                   # 经 Hugo 处理的资源
+│   ├── icons/                # 自定义 SVG 图标 (linuxdo / mail)
+│   ├── img/                  # 图片资源 (avatar / favicon / banner / 赞赏码)
+│   └── scss/custom.scss      # 自定义样式（霓虹渐变 / fzf 搜索 / 故障 404 / 打赏...）
+├── content/                  # 所有文章和页面
+│   ├── about/                # 关于页
+│   ├── post/                 # 文章
+│   ├── archives/             # 归档页
+│   └── search.md             # 搜索页
+├── layouts/                  # 自定义模板覆盖
+│   ├── 404.html              # 故障霓虹 404
+│   ├── home.html             # 含 hero + 文章列表
+│   ├── single.html           # 含打赏 + Waline
+│   ├── index.json            # 搜索索引
+│   ├── page/search.html      # fzf 搜索 UI
+│   └── _partials/            # head/footer/sidebar/widget/article 自定义
+├── static/                   # 原样复制的静态文件
 ├── themes/hugo-theme-stack/  # 主题（git submodule）
-├── .pages.yml           # Pages CMS 配置
-├── hugo.yaml            # Hugo 配置
-└── LICENSE              # GPL-3.0
+├── .pages.yml                # Pages CMS 配置
+├── hugo.yaml                 # Hugo 配置
+└── LICENSE                   # GPL-3.0
 ```
+
+## ☕ 打赏
+
+如果这个项目或我写的文章帮到了你，欢迎请我喝杯咖啡：
+
+<div align="center">
+  <img src="static/img/zan-shang.png" width="240" alt="赞赏码" />
+  <br/>
+  <sub>感谢支持 ✨</sub>
+</div>
 
 ## 📜 License
 

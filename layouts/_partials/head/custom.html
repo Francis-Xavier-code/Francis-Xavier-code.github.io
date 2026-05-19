@@ -1,1 +1,17 @@
-{{/* 站点自定义 head 注入 */}}
+{{/* ============ XYNRIN-BLOG · 自定义 head ============ */}}
+
+{{/* 不蒜子访问统计 */}}
+{{ if .Site.Params.analytics.busuanzi.enabled }}
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+{{ end }}
+
+{{/* Waline 评论 + 点赞 + 浏览量 样式 */}}
+{{ if and .Site.Params.comments.enabled (eq .Site.Params.comments.provider "waline") }}
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
+<link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline-meta.css" />
+{{ end }}
+
+{{/* KaTeX (math) */}}
+{{ if .Site.Params.article.math }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+{{ end }}

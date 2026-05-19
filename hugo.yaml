@@ -33,9 +33,25 @@ params:
   rssFullContent: true
   favicon: img/favicon.png
 
-  mainBanner:
+  sidebarBanner:
     image: img/my-linux-do.png
     link: https://linux.do/u/xynrin/
+
+  since: "2026-05-19"
+
+  hero:
+    enabled: true
+    title: 'XYNRIN<span class="hero-accent">·</span>BLOG'
+    subtitle: '记录折腾，留下痕迹'
+    typing:
+      - "用代码丈量世界"
+      - "用文字凝固时间"
+      - "Stay curious, stay foolish"
+
+  reward:
+    enabled: true
+    comment: "如果觉得有帮助，请我喝杯咖啡 ☕"
+    image: img/zan-shang.png
 
   footer:
     since: 2026
@@ -51,7 +67,7 @@ params:
     avatar: img/avatar.png
 
   article:
-    math: false
+    math: true
     toc: true
     readingTime: true
     license:
@@ -59,7 +75,20 @@ params:
       default: 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议
 
   comments:
-    enabled: false
+    enabled: true
+    provider: waline
+    waline:
+      serverURL: ""  # TODO: 填入 Waline 后端地址，例如 https://your-waline.vercel.app
+      pageview: true
+      emoji:
+        - https://unpkg.com/@waline/emojis@1.1.0/weibo
+      requiredMeta:
+        - nick
+      lang: zh-CN
+
+  analytics:
+    busuanzi:
+      enabled: true
 
   widgets:
     homepage:
@@ -73,6 +102,7 @@ params:
       - type: tag-cloud
         params:
           limit: 10
+      - type: rss-qr
     page:
       - type: toc
 
