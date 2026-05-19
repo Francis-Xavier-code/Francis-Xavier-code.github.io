@@ -2,23 +2,22 @@
 
 > 这份文档讲清楚整个博客是怎么运转的。每一块用什么、为什么这么选、数据怎么流。
 
-## 🎯 核心理念：静态站 + Serverless 数据层
+## 🎯 核心理念：静态站 + 第三方数据层
 
-GitHub Pages 只能托管静态文件，没有任何后端能力。但博客需要一些「动态」功能：评论、浏览量、点赞。
-解决方案：**静态站负责展示，第三方 Serverless 负责数据**。
+GitHub Pages 只能托管静态文件，没有任何后端能力。但博客需要一些「动态」功能：评论、统计。
+解决方案：**静态站负责展示，第三方服务负责数据**。
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                       浏览器                            │
 │  ┌──────────────────┐    ┌──────────────────────────┐  │
-│  │ Hugo 静态 HTML   │    │ JS 异步请求 Waline       │  │
-│  │ (xynrin.github.io)│───▶│ (pinglun-blog.vercel.app)│  │
+│  │ Hugo 静态 HTML   │    │ Giscus iframe            │  │
+│  │ (xynrin.github.io)│───▶│ (giscus.app)             │  │
 │  └──────────────────┘    └────────┬─────────────────┘  │
-│                                    │ GitHub API         │
+│                                    │ GitHub GraphQL     │
 │                                    ▼                    │
 │                          ┌──────────────────┐           │
-│                          │ waline-data 仓库 │           │
-│                          │ (JSON 文件存储)  │           │
+│                          │ 仓库 Discussions │           │
 │                          └──────────────────┘           │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -33,9 +32,8 @@ GitHub Pages 只能托管静态文件，没有任何后端能力。但博客需�
 | 主题 | hugo-theme-stack v4 | 设计干净、可定制度高、社区活跃 |
 | 部署 | GitHub Pages + GitHub Actions | 免费、和代码托管同处、零配置 |
 | 写作后台 | Pages CMS | 零自建、GitHub App 授权、可视化字段 |
-| 评论后端 | Waline | 开源、UI 漂亮、点赞浏览量一体 |
-| 评论部署 | Vercel | 免费 Serverless、国内速度尚可、和 GitHub 联动 |
-| 评论数据 | GitHub Repo | 不依赖任何数据库服务、永久免费、可备份 |
+| 评论后端 | Giscus | 零自建、用 GitHub Discussions 当数据库 |
+| 评论数据 | 仓库 Discussions | 不依赖外部服务、永久免费、自带反垃圾 |
 | 全站统计 | 不蒜子 | 一行 JS 即可、零配置 |
 | README 徽章 | shields.io / visitor-badge | 公开免费、实时数据 |
 
@@ -69,31 +67,25 @@ xynrin.github.io 更新（缓存约 1 分钟）
 浏览器解析 HTML，并行加载：
   ├─ Hugo 编译的 CSS / JS
   ├─ 不蒜子 JS（busuanzi.pure.mini.js）→ 写 PV/UV 到页脚
-  └─ Waline JS（@waline/client）
-       ↓ init({ serverURL: 'https://pinglun-blog.vercel.app' })
-       ↓ AJAX 请求
-       Vercel Serverless Function (Waline)
-         ↓ 用 GITHUB_TOKEN 调 GitHub API
-         读取 waline-data 仓库 comments/ 下的 JSON
-         ↓
-         返回评论数 / 浏览量
+  └─ Giscus iframe（giscus.app/client.js）
+       ↓ 通过 pathname 找到对应的 Discussion
+       ↓ 调 GitHub GraphQL API
+       仓库 Discussions
        ↓
-       Waline 渲染评论框 + 浏览量数字
+       渲染评论列表 + reactions
 ```
 
 ### 3. 访客提交评论
 
 ```
-访客填评论 → 点提交
+访客点击 Giscus 评论框 → 用 GitHub 登录授权
+  ↓ Giscus 引导 OAuth 流程
+GitHub 校验通过，发回 token
   ↓
-Waline 前端 POST 到 pinglun-blog.vercel.app/api/comment
-  ↓ Vercel 函数
-  ↓ 反垃圾检查（SITE_URL 同源 + Akismet 默认启用）
-  ↓ 用 GITHUB_TOKEN 通过 GitHub API
-  ↓ 在 waline-data 仓库新建 / 更新 JSON
-GitHub 收到 commit（commit 作者是 Waline 机器人）
-  ↓ 评论入库
-返回成功 → 前端自动刷新评论列表
+Giscus 通过 GitHub API 在 Discussions 里新增 comment
+GitHub 自动反垃圾 + 通知（你能在 GitHub 收到通知）
+  ↓
+评论实时显示
 ```
 
 ### 4. 不蒜子统计
@@ -183,15 +175,12 @@ JS 写到 #busuanzi_value_site_pv 和 #busuanzi_value_site_uv
 - **它没有公开 HTTP API** 让外部按用户名查询数字
 - 想在 README 显示真实 PV，必须换用 Umami / Vercel Analytics 这类有 API 的服务
 
-### 为什么 Waline 用 GitHub 当数据库不用 LeanCloud？
-- LeanCloud 国内站对个人开发者关闭了新注册
-- LeanCloud 国际站需要绑信用卡
-- GitHub 仓库 + Token 完全免费、永不下线、想备份直接 clone
-
-### 为什么 Vercel 不直接放在 GitHub Pages？
-- GitHub Pages 是纯静态托管，不能跑 Node.js
-- Waline 需要 Serverless Function 处理评论提交、调 GitHub API、反垃圾
-- Vercel 提供免费 Serverless Function，且和 GitHub 联动好
+### 为什么评论选 Giscus 不选 Waline？
+- Waline 需要部署后端（Vercel）+ 数据库（GitHub repo / LeanCloud / MongoDB）+ 配 7+ 个环境变量
+- 任意一个环节出问题（Sensitive 标签、跨域、JWT、域名白名单）都会让评论挂掉
+- Giscus 不需要后端，所有数据存在仓库的 Discussions 里，配 4 个 ID 就能用
+- 缺点：访客必须有 GitHub 账号、不能统计单篇浏览量
+- 评论隐私？Discussion 是公开的，但你可以删任何 comment
 
 ---
 
@@ -200,14 +189,12 @@ JS 写到 #busuanzi_value_site_pv 和 #busuanzi_value_site_uv
 | 资源 | 保护方式 | 风险 |
 |------|----------|------|
 | 博客主仓库 | Public（必须公开） | 无敏感数据 |
-| waline-data 仓库 | Private + Token | Token 泄漏 → 评论可被篡改 |
-| Vercel 环境变量 | 加密存储 | 仅项目所有者可见 |
-| GitHub Token | repo 权限、不过期 | 定期检查活动日志，疑似异常立即吊销 |
-| Hugo 配置 | hugo.yaml 公开 | 无敏感字段（serverURL 是公开的） |
+| Discussions（评论） | 跟仓库一样公开 | 评论可被任何人看到（这是设计如此） |
+| Hugo 配置 | hugo.yaml 公开 | 无敏感字段 |
 
 **绝对不能进 git 的东西**：
-- GitHub Token（`ghp_xxx`）
 - 任何含 `secret` / `private_key` 的字段
+- 个人邮箱/手机号（在 markdown 文本里写没问题，URL 参数里别写）
 
 ---
 
@@ -218,5 +205,5 @@ JS 写到 #busuanzi_value_site_pv 和 #busuanzi_value_site_uv
 | Hugo 模板语法 | https://gohugo.io/templates/ |
 | 主题文档 | https://stack.jimmycai.com/ |
 | GitHub Actions | https://docs.github.com/actions |
-| Waline 文档 | https://waline.js.org/ |
+| Giscus 文档 | https://github.com/giscus/giscus |
 | Pages CMS 文档 | https://pagescms.org/docs |

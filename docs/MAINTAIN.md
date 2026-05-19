@@ -6,17 +6,15 @@
 
 ### 每周（5 分钟）
 - [ ] 检查 [GitHub Actions](https://github.com/Xynrin/Xynrin.github.io/actions) 有没有红色失败
-- [ ] 看一眼 [Vercel Deployments](https://vercel.com/dashboard)，确保 `pinglun-blog` 是绿色 Ready
-- [ ] 翻一下 [waline-data](https://github.com/Xynrin/waline-data) 仓库 commits，看有没有评论 / 垃圾评论
+- [ ] 翻一下 [仓库 Discussions](https://github.com/Xynrin/Xynrin.github.io/discussions) 看有没有新评论 / 不当内容
 
 ### 每月（15 分钟）
 - [ ] `cd themes/hugo-theme-stack && git pull && cd ../..` 升级主题，本地 `hugo server` 看有没有破坏样式
 - [ ] 跑 `hugo --gc` 清理失效缓存
 - [ ] 查看 [Hugo 新版本](https://github.com/gohugoio/hugo/releases)，如有大版本更新，调整 `.github/workflows/hugo.yml` 里的 `HUGO_VERSION`
-- [ ] 检查 GitHub Token 是否还有效（你设置的是 No expiration 就免操心）
 
 ### 每年
-- [ ] 备份 `waline-data` 仓库（评论数据，简单 `git clone` 一份）
+- [ ] 备份评论数据：`gh api repos/Xynrin/Xynrin.github.io/discussions --paginate > discussions-backup.json`
 - [ ] 看是否要换或加新的 logo / banner / 头像
 
 ---
@@ -27,16 +25,18 @@
 
 | 网站 | 登录方式 | 用来做什么 |
 |------|----------|------------|
-| [GitHub](https://github.com/Xynrin) | 你的 GitHub 账号 | 改代码、看 Actions |
+| [GitHub](https://github.com/Xynrin) | 你的 GitHub 账号 | 改代码、看 Actions、看 Discussions 评论 |
 | [Pages CMS](https://app.pagescms.org) | GitHub OAuth | 网页写文章 |
-| [Vercel](https://vercel.com/dashboard) | GitHub OAuth | 看评论后端状态、查日志 |
+| [Giscus](https://giscus.app) | 不用登录 | 改评论配置（一次性，平时不用动） |
 | [Linux.do](https://linux.do/u/xynrin/) | 你的 Linux.do 账号 | 社区互动 |
 
 可选（出问题才登）：
 
 | 网站 | 用途 |
 |------|------|
-| https://github.com/settings/tokens | 重新生成 Waline Token |
+| https://github.com/Xynrin/Xynrin.github.io/settings | 启用 Discussions / Pages 设置 |
+| https://github.com/apps/giscus | Giscus App 配置 |
+| https://giscus.app | Giscus ID 生成器 |
 | https://busuanzi.ibruce.info/ | 不蒜子（基本不用动） |
 | https://app.pagescms.org/Xynrin/Xynrin.github.io | 直达 Pages CMS 项目页 |
 
@@ -62,9 +62,7 @@ hugo server --buildDrafts   # 本地预览 http://localhost:1313
 git add .
 git commit -m "post: 我的新文章"
 git push
-```
-
-### Front Matter 字段
+```### Front Matter 字段
 
 ```yaml
 ---
@@ -137,17 +135,16 @@ menu:
 
 ## 🚨 应急：评论系统挂了
 
-**症状**：访客提交评论失败 / 评论框白板。
+**症状**：文章页底部没出现评论区 / 评论提交失败。
 
 **排查**：
 
-1. 浏览器 F12 开 Network，刷文章页，找 `pinglun-blog.vercel.app` 请求看响应
-2. 直接 `curl https://pinglun-blog.vercel.app/api/comment` 应该返回 `{"errno":1001,...}`（这是正常的）
-3. 如果 500：去 [Vercel](https://vercel.com/dashboard) → `pinglun-blog` → Functions → 看错误日志
-4. 如果是 GitHub Token 过期：
-   - https://github.com/settings/tokens 生成新的（勾 `repo`）
-   - Vercel → Settings → Environments → Production → 改 `GITHUB_TOKEN`
-   - Deployments → Redeploy（不用 Build Cache）
+1. 打开 https://github.com/Xynrin/Xynrin.github.io/settings → Features，确认 Discussions 勾着
+2. 打开 https://github.com/apps/giscus → Configure，确认 App 装在 `Xynrin.github.io`
+3. 打开任意一篇文章 F12 → Console，看有没有 giscus 相关红字报错
+4. 报错 "Discussion not found" 是正常的：说明这篇文章还没有人评论，第一条评论会自动创建 Discussion
+5. 报错 "App not installed" → 重新装 Giscus App
+6. 想换 ID（比如换 category）→ 去 https://giscus.app 重新生成，更新 `hugo.yaml`
 
 ---
 
@@ -156,13 +153,16 @@ menu:
 只要 GitHub 仓库还在，理论上你不需要备份。但建议每年一次：
 
 ```bash
-# 备份博客本体
+# 备份博客本体（含所有评论数据：Discussions 用 GitHub API 导出）
 git clone --mirror https://github.com/Xynrin/Xynrin.github.io.git
-# 备份评论数据
-git clone --mirror https://github.com/Xynrin/waline-data.git
 ```
 
-把这两个 `.git` 文件夹存到 OneDrive / 网盘任何地方。
+把 `.git` 文件夹存到 OneDrive / 网盘任何地方。
+
+> 评论数据在仓库的 Discussions 里，跟代码不在同一棵 git 树上。要单独备份评论的话用：
+> ```bash
+> gh api repos/Xynrin/Xynrin.github.io/discussions --paginate > discussions-backup.json
+> ```
 
 ---
 
@@ -172,8 +172,7 @@ git clone --mirror https://github.com/Xynrin/waline-data.git
 |-------|------|
 | 写文章 | https://app.pagescms.org |
 | 看部署状态 | https://github.com/Xynrin/Xynrin.github.io/actions |
-| 看评论后端 | https://vercel.com/dashboard |
-| 看评论数据 | https://github.com/Xynrin/waline-data |
+| 看评论 | https://github.com/Xynrin/Xynrin.github.io/discussions |
+| 改评论配置 | https://giscus.app |
 | 看主题最新版 | https://github.com/CaiJimmy/hugo-theme-stack/releases |
 | 看 Hugo 最新版 | https://github.com/gohugoio/hugo/releases |
-| 改 GitHub Token | https://github.com/settings/tokens |

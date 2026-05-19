@@ -75,15 +75,20 @@ params:
 
   comments:
     enabled: true
-    provider: waline
-    waline:
-      serverURL: https://pinglun-blog.vercel.app
-      pageview: true
-      emoji:
-        - https://unpkg.com/@waline/emojis@1.1.0/weibo
-      requiredMeta:
-        - nick
+    provider: giscus
+    giscus:
+      repo: Xynrin/Xynrin.github.io
+      repoID: R_kgDOSiCzDA
+      category: Announcements
+      categoryID: DIC_kwDOSiCzDM4C9Z8_
+      mapping: pathname
+      lightTheme: light
+      darkTheme: dark_dimmed
+      reactionsEnabled: 1
+      emitMetadata: 0
+      inputPosition: top
       lang: zh-CN
+      loading: lazy
 
   analytics:
     busuanzi:

@@ -54,11 +54,6 @@
 
                 {{/* 字数 */}}
                 <span class="article-words">📝 {{ $Page.WordCount }} 字</span>
-
-                {{/* Waline 浏览量（每篇文章页面） */}}
-                {{ if and (not $IsList) ($Page.Site.Params.comments.waline.serverURL) ($Page.Site.Params.comments.waline.pageview) }}
-                    <span class="waline-pageview-count" data-path="{{ $Page.RelPermalink }}">👁 <span>--</span></span>
-                {{ end }}
             </div>
         {{ end }}
 

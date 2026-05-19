@@ -6,7 +6,7 @@
 
 `本地写 Markdown` → `git push 到 GitHub` → `GitHub Actions 自动 build Hugo` → `部署到 GitHub Pages` → `xynrin.github.io 更新`。
 
-评论 / 浏览量 / 点赞由 `Waline 后端（部署在 Vercel）` 处理，数据存在 `GitHub 私有仓库 waline-data`。
+评论由 `Giscus`（基于 GitHub Discussions）处理，零自建后端。
 
 ---
 
@@ -63,60 +63,39 @@ graph LR
 
 ---
 
-## 💬 三、评论系统（Waline + GitHub 存储）
+## 💬 三、评论系统（Giscus）
 
-### 后端：Vercel
-**部署地址**：https://pinglun-blog.vercel.app
+> 用 GitHub Discussions 当数据库，零自建后端。访客需要 GitHub 账号才能评论。
 
-### 数据库：GitHub
-**数据仓库**：`Xynrin/waline-data`（评论以 JSON 文件形式存放）
+### 一次性配置
 
-### Vercel 环境变量（必须配齐）
+1. **启用仓库 Discussions**：https://github.com/Xynrin/Xynrin.github.io/settings → Features → 勾 Discussions
+2. **安装 Giscus App**：https://github.com/apps/giscus → Install → 仅选 `Xynrin.github.io` 仓库
+3. **生成 ID**：https://giscus.app → 输入仓库名验证 → 选 pathname / Announcements → 复制 4 个 ID
 
-**基础（必须）：**
+### `hugo.yaml` 配置
 
-| Key | Value | 用途 |
-|-----|-------|------|
-| `GITHUB_TOKEN` | `ghp_xxxxxxxx` | 读写 waline-data 仓库 |
-| `GITHUB_REPO` | `Xynrin/waline-data` | 数据仓库路径 |
-| `GITHUB_PATH` | `comments` | 数据仓库内子目录 |
-| `SITE_URL` | `https://xynrin.github.io` | 防止反垃圾 |
-| `JWT_TOKEN` | 32+ 位随机字符串 | session 签名密钥（少了 OAuth 登录会 500） |
-| `AUTHOR_EMAIL` | `xynrin@163.com` | 标识博主身份（评论会有特殊标记） |
-| `SECURE_DOMAINS` | `xynrin.github.io` | 评论可信域名 |
-
-**可选（要 GitHub 登录管理后台才需要）：**
-
-| Key | Value | 用途 |
-|-----|-------|------|
-| `GITHUB_CLIENT_ID` | OAuth App Client ID | GitHub 登录 |
-| `GITHUB_CLIENT_SECRET` | OAuth App Client Secret | GitHub 登录 |
-
-GitHub OAuth App 创建：https://github.com/settings/developers → New OAuth App
-- Homepage URL: `https://xynrin.github.io`
-- Authorization callback URL: `https://pinglun-blog.vercel.app/api/oauth/github`
-
-**Token 在哪里生成**：
-- https://github.com/settings/tokens/new
-- Note: `waline`
-- Expiration: No expiration
-- 勾选 `repo` 权限
-- ⚠️ Token 创建后只能复制一次，丢了只能重新生成
-
-**Vercel 环境变量配置位置**：
-- https://vercel.com/dashboard → 项目 `pinglun-blog` → Settings → Environments → Production → Add Variable
-
-### 前端接入（已完成）
-`hugo.yaml` 里：
 ```yaml
 params:
   comments:
     enabled: true
-    provider: waline
-    waline:
-      serverURL: https://pinglun-blog.vercel.app
-      pageview: true   # 启用浏览量统计
+    provider: giscus
+    giscus:
+      repo: Xynrin/Xynrin.github.io
+      repoID: R_kgDOSiCzDA               # giscus.app 验证后获取
+      category: Announcements
+      categoryID: DIC_kwDOSiCzDM4C9Z8_   # giscus.app 验证后获取
+      mapping: pathname
+      lightTheme: light
+      darkTheme: dark_dimmed
+      reactionsEnabled: 1
+      inputPosition: top
+      lang: zh-CN
+      loading: lazy
 ```
+
+> 评论数据存在仓库的 Discussions 里，每篇文章自动对应一个 Discussion。
+> 想换评论源（Waline / Twikoo / Cusdis 等），改 `provider` 一行即可，主题已支持。
 
 ---
 
@@ -152,10 +131,8 @@ git push
 |------|------|----------|------|
 | GitHub | 代码 + Pages 托管 | https://github.com/Xynrin | 主战场 |
 | Pages CMS | 网页可视化写文章 | https://app.pagescms.org | 用 GitHub 登录 |
-| Vercel | Waline 后端托管 | https://vercel.com/dashboard | 项目名 `pinglun-blog` |
-| GitHub Token | Waline 写数据库 | https://github.com/settings/tokens | 失效需重生 |
+| Giscus | 评论系统 | https://giscus.app | 数据存仓库 Discussions，零后端 |
 | 不蒜子 | 全站 PV/UV | （无后台，自动统计） | https://busuanzi.ibruce.info |
-| Waline | 评论 / 点赞 / 单篇浏览量 | https://pinglun-blog.vercel.app | 后台见数据见 waline-data 仓库 |
 | visitor-badge | README 浏览徽章 | https://visitor-badge.laobi.icu | 公开服务 |
 | shields.io | GitHub 数据徽章 | https://shields.io | 公开服务 |
 | capsule-render | Profile banner 横幅 | https://capsule-render.vercel.app | 公开服务 |
@@ -184,8 +161,8 @@ git push
 |------|------|
 | 网站访问 404 | Settings → Pages → Source 必须是 GitHub Actions |
 | 部署成功但页面没更新 | 浏览器强刷 `Ctrl + F5` |
-| 评论框不显示 | 1. Vercel 环境变量是否配在 **Production**；2. `pinglun-blog.vercel.app/api/comment` 返回 `errno:1001` 表示后端正常 |
-| 评论提交失败 | GitHub Token 可能过期或丢失 repo 权限，去 https://github.com/settings/tokens 检查 |
+| 评论框不显示 | 1. 仓库 Discussions 是否启用；2. Giscus App 是否装到这个仓库；3. `hugo.yaml` 里的 `repoID` / `categoryID` 是否正确 |
+| 评论提交报错 "App not installed" | 去 https://github.com/apps/giscus 重新装到仓库 |
 | 不蒜子数字一直是 0 | 该服务偶尔不稳定，等几小时再看 |
 | 中文徽章乱码 | shields.io 的 URL 参数里别用中文，用纯英文 |
 
