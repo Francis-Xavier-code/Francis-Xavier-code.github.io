@@ -3,12 +3,15 @@ title: DeepSeek TUI MCP Server 制作指南
 date: 2026-05-20
 slug: deepseek-tui-mcp-server
 description: 制作deepseek-tui的mcp工具，以余额查询mcp为例
+image: /img/deepseeklogo-1.jpg
+categories:
+  - 技术
+  - 随笔
 tags:
   - deepseek
   - ai
 draft: false
 ---
-
 以 `ds-balance-mcp` 为例，说明如何为 DeepSeek TUI 制作一个 MCP Server。
 
 ## 架构概览
@@ -35,11 +38,13 @@ DeepSeek TUI (MCP Host)          MCP Server (独立进程)
 
 必须实现三个方法：
 
+
 | 方法 | 作用 | 何时调用 |
-|------|------|----------|
+| ------------ | ------------ | -------------- |
 | `initialize` | 握手，声明协议版本和能力 | Server 启动后立即调用 |
 | `tools/list` | 列出所有可用工具 | Initialize 之后 |
 | `tools/call` | 执行具体工具 | 用户触发工具调用时 |
+
 
 ```python
 def handle(req):
@@ -154,14 +159,16 @@ def main():
 }
 ```
 
+
 | 字段 | 说明 |
-|------|------|
+| ---------------- | ----------- |
 | `command` | 启动命令 |
 | `args` | 命令行参数 |
 | `env` | 环境变量（可选） |
 | `enabled` | 是否启用 |
 | `enabled_tools` | 白名单（空=全部启用） |
 | `disabled_tools` | 黑名单 |
+
 
 重启 TUI 后会自动启动 Server 进程，工具名格式为 `mcp_<server名>_<工具名>`，例如 `mcp_my-server_hello`。
 
@@ -273,10 +280,12 @@ if __name__ == "__main__":
 
 实际部署的 `ds-balance-mcp` 提供了两个工具：
 
+
 | 工具名 | 功能 | 实现方式 |
-|--------|------|----------|
+| ------------------- | ------------------ | ------------------------------------------------------------------- |
 | `check_balance` | 查询 DeepSeek API 余额 | HTTP GET `api.deepseek.com/user/balance`，从 `config.toml` 读取 API Key |
 | `check_token_usage` | 查看当前会话 Token 用量 | 读取 `~/.deepseek/sessions/` 下最新的 JSON 会话文件 |
+
 
 ### `tools/list` 返回的工具定义
 
@@ -337,3 +346,4 @@ DeepSeek TUI 内置了 `mcp-builder` 技能，可以辅助设计、构建和调�
 4. **日志**：打到 stderr，不要污染 stdout
 5. **结果**：`content` 数组，每项 `{"type": "text", "text": "..."}`
 6. **工具名**：TUI 自动加前缀 `mcp_<server名>_<工具名>`
+
