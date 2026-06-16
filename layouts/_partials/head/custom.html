@@ -9,3 +9,9 @@
 {{ if .Site.Params.article.math }}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
 {{ end }}
+
+{{/* Google AdSense */}}
+{{ if .Site.Params.adsense.enabled }}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ .Site.Params.adsense.client }}"
+    crossorigin="anonymous"></script>
+{{ end }}

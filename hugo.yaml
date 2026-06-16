@@ -94,6 +94,11 @@ params:
     busuanzi:
       enabled: true
 
+  adsense:
+    enabled: true
+    client: "ca-pub-7294159431010200"
+    articleSlot: "" # 填入 AdSense 广告单元的 data-ad-slot，留空则不在文章内显示广告位
+
   widgets:
     homepage:
       - type: search
