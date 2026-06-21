@@ -3,7 +3,8 @@ title: 初次搭建blog
 date: 2026-05-19
 slug: hello-my-blog
 description: 博客的第一篇文章
-image: /img/1.png
+cover:
+  image: /img/1.png
 categories:
   - 随笔
 tags:

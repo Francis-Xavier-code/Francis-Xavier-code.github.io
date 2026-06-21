@@ -3,7 +3,8 @@ title: DeepSeek TUI MCP Server 制作指南
 date: 2026-05-20
 slug: deepseek-tui-mcp-server
 description: 制作deepseek-tui的mcp工具，以余额查询mcp为例
-image: /img/deepseeklogo-1.jpg
+cover:
+  image: /img/deepseeklogo-1.jpg
 categories:
   - 技术
   - 随笔

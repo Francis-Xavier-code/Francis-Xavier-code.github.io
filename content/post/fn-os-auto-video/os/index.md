@@ -3,7 +3,8 @@ title: 飞牛OS使用脚本快速搭建下载影视
 date: 2026-06-08
 slug: fn-os-auto-video
 description: 通过脚本快速搭建下载视频的服务，从而解决找各种教程以及源的问题
-image: /img/8-1.png
+cover:
+  image: /img/8-1.png
 categories:
   - 技术
   - 生活

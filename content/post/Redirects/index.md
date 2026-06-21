@@ -3,7 +3,8 @@ title: 快速创建属于自己的重定向工具
 date: 2026-06-07
 slug: Redirects
 description: 快速搭建属于自己的域名短链并设置重定向
-image: /img/ChatGPT Image 2026年6月7日 17_10_37.png
+cover:
+  image: /img/ChatGPT Image 2026年6月7日 17_10_37.png
 categories:
   - 技术
 tags:
