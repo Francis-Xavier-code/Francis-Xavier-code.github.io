@@ -4,7 +4,7 @@ date: 2026-06-07
 slug: Redirects
 description: 快速搭建属于自己的域名短链并设置重定向
 cover:
-  image: /img/ChatGPT Image 2026年6月7日 17_10_37.png
+  image: ChatGPT Image 2026年6月7日 17_10_37.png
 categories:
   - 技术
 tags:
@@ -39,11 +39,11 @@ draft: false
 1. **注册与配置**：访问 [InfinityFree 官网](https://dash.infinityfree.com/)，注册账号并创建/配置好你带二级域名的虚拟主机。
 2. **管理主机**：在后台控制面板中，点击你域名旁边的 `Manage` 按钮。
 
-![Pasted image 20260607164629.png](</img/Pasted image 20260607164629.png>)
+![Pasted image 20260607164629.png](<Pasted image 20260607164629.png>)
 
 3. **进入重定向设置**：进入管理面板后，按照下图的指引找到并点击 `Redirects`（重定向）功能。
 
-![Pasted image 20260607164835.png](</img/Pasted image 20260607164835.png>)
+![Pasted image 20260607164835.png](<Pasted image 20260607164835.png>)
 
 4. **添加重定向**：在重定向页面中，点击右上角（或表单中）的添加按钮，输入你的目标网址和重定向路径，保存即可。
 

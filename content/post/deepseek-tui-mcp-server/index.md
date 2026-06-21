@@ -4,7 +4,7 @@ date: 2026-05-20
 slug: deepseek-tui-mcp-server
 description: 制作deepseek-tui的mcp工具，以余额查询mcp为例
 cover:
-  image: /img/deepseeklogo-1.jpg
+  image: deepseeklogo-1.jpg
 categories:
   - 技术
   - 随笔

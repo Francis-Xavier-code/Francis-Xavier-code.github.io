@@ -4,7 +4,7 @@ date: 2026-05-19
 slug: hello-my-blog
 description: 博客的第一篇文章
 cover:
-  image: /img/1.png
+  image: 1.png
 categories:
   - 随笔
 tags:
