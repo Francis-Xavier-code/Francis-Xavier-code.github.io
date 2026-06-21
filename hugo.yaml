@@ -3,7 +3,7 @@ locale: zh-cn
 defaultContentLanguage: zh-cn
 hasCJKLanguage: true
 title: XYNRIN-BLOG
-theme: hugo-theme-stack
+theme: PaperMod
 
 outputs:
   home:
