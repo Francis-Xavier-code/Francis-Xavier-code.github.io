@@ -1,7 +1,6 @@
 ---
 title: "Changelog"
 date: 2026-06-22
-layout: "archives"
 comments: false
 ---
 
