@@ -141,9 +141,8 @@ params:
       local: false
       src: ""
 
-  colorScheme:
-    toggle: true
-    default: auto
+  disableThemeToggle: true
+  defaultTheme: dark
 
   cover:
     hiddenInList: true

@@ -1,0 +1,15 @@
+/* Override background color globally */
+:root, .dark, body {
+    --theme: #262624 !important;
+    background-color: #262624 !important;
+}
+
+/* Ensure header, footer, and other elements use the same background */
+.header, .footer {
+    background-color: #262624 !important;
+    --theme: #262624 !important;
+}
+
+.profile {
+    background-color: #262624 !important;
+}
