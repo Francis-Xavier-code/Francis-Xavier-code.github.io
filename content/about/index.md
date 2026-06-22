@@ -1,12 +1,20 @@
 ---
 title: "关于我"
 description: "xynrin 的个人介绍"
-date: 2026-05-19
+date: 2026-06-22
 license: false
 ---
 
-你好，我是 **xynrin**，欢迎来到我的博客。
+你好，我是 **xynrin**
 
-这里会记录我在开发、学习、生活中的一些思考与笔记。
+在这个页面中 我会介绍我自己
 
-- GitHub: [Xynrin](https://github.com/Xynrin)
+
+
+
+
+
+
+# 公众号
+
+![weixin-gzh](weixin-gzh.jpeg)
