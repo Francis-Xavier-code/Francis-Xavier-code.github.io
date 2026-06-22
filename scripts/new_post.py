@@ -80,17 +80,23 @@ with open(target_file, "w", encoding="utf-8") as f:
 print_success(f"文章已创建: {target_file}")
 print_step("正在唤起 Typora 编辑器...")
 
-# 尝试在 PATH 中直接唤醒 typora (非阻塞模式)
+# 唤起 Typora 并且等待其关闭 (不阻塞输入)
 try:
     typora_path = r"C:\Program Files\Typora\Typora.exe"
     if os.path.exists(typora_path):
-        subprocess.Popen([typora_path, target_file], creationflags=subprocess.DETACHED_PROCESS)
+        p = subprocess.Popen([typora_path, target_file], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        p.wait()
     else:
-        # 尝试通过默认关联打开
+        # 尝试通过默认关联打开 (无法完美等待，只能直接结束)
         os.startfile(target_file)
 except Exception:
     os.startfile(target_file)
 
-print_success("一切就绪！祝写作愉快~")
-print("\n")
-input("按回车键退出本窗口...")
+print_step("Typora 编辑器已关闭。")
+deploy = prompt_input("是否立即将新文章一键发布到博客主页？(y/n): ")
+if deploy.lower() == 'y':
+    os.system("python scripts/deploy.py")
+else:
+    print_success("好的，文章已保存在本地。")
+    print("\n")
+    input("按回车键退出本窗口...")

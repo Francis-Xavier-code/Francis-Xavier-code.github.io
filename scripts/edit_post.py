@@ -73,11 +73,18 @@ try:
     import subprocess
     typora_path = r"C:\Program Files\Typora\Typora.exe"
     if os.path.exists(typora_path):
-        subprocess.Popen([typora_path, target_file], creationflags=subprocess.DETACHED_PROCESS)
+        p = subprocess.Popen([typora_path, target_file], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        p.wait()
     else:
         os.startfile(target_file)
 except Exception:
     os.startfile(target_file)
 
-print("\n")
-input("按回车键退出本窗口...")
+print_step("Typora 编辑器已关闭。")
+deploy = prompt_input("修改完成了！是否立即一键发布同步到线上？(y/n): ")
+if deploy.lower() == 'y':
+    os.system("python scripts/deploy.py")
+else:
+    print_success("好的，修改已保存在本地。")
+    print("\n")
+    input("按回车键退出本窗口...")
