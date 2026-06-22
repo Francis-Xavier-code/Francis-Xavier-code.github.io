@@ -144,11 +144,9 @@ params:
     toggle: true
     default: auto
 
-  imageProcessing:
-    cover:
-      enabled: true
-    content:
-      enabled: true
+  cover:
+    hiddenInList: true
+    hiddenInSingle: true
 
 
 related:
@@ -182,7 +180,7 @@ menu:
   main:
     - identifier: posts
       name: 文章
-      url: /post/
+      url: /archives/
       weight: 10
     - identifier: tags
       name: 标签
