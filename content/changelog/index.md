@@ -1,7 +1,10 @@
 ---
 title: "Changelog"
-date: 2026-06-22
+type: "page"
 comments: false
+ShowReadingTime: false
+ShowWordCount: false
+ShowPostNavLinks: false
 ---
 
 记录博客的更新与变动。
