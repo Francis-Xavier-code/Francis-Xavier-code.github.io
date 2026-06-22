@@ -27,6 +27,22 @@ permalinks:
   page: /:slug/
 
 params:
+  profileMode:
+    enabled: true
+    title: Xynrin
+    subtitle: 记录折腾，留下痕迹
+    imageUrl: /img/avatar.png
+    imageTitle: avatar
+    imageWidth: 120
+    imageHeight: 120
+
+  socialIcons:
+    - name: github
+      url: https://github.com/Xynrin
+    - name: email
+      url: mailto:xynrin@163.com
+    - name: bilibili
+      url: https://space.bilibili.com/1198508132
   mainSections:
     - post
   featuredImageField: image
@@ -54,7 +70,7 @@ params:
 
   footer:
     since: 2026
-    customText: '本站源码遵循 <a href="https://github.com/Xynrin/Xynrin.github.io/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a> 协议开源'
+    customText: '本站源码遵循 <a href="https://github.com/Xynrin/Xynrin.github.io/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a> 协议开源 | <a href="/changelog/">Changelog</a>'
 
   DateFormat: "2006-01-02"
 
@@ -134,30 +150,6 @@ params:
     content:
       enabled: true
 
-menu:
-  main:
-    - identifier: home
-      name: 首页
-      url: /
-      weight: -100
-      params:
-        icon: home
-  social:
-    - identifier: github
-      name: GitHub
-      url: https://github.com/Xynrin
-      params:
-        icon: brand-github
-    - identifier: linuxdo
-      name: Linux.do
-      url: https://linux.do/u/xynrin/
-      params:
-        icon: brand-linuxdo
-    - identifier: email
-      name: Email
-      url: mailto:xynrin@163.com
-      params:
-        icon: mail
 
 related:
   includeNewer: true
@@ -185,3 +177,22 @@ markup:
     lineNos: true
     lineNumbersInTable: true
     tabWidth: 4
+
+menu:
+  main:
+    - identifier: posts
+      name: 文章
+      url: /post/
+      weight: 10
+    - identifier: tags
+      name: 标签
+      url: /tags/
+      weight: 20
+    - identifier: about
+      name: 关于
+      url: /about/
+      weight: 30
+    - identifier: search
+      name: 搜索
+      url: /search/
+      weight: 40
