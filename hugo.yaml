@@ -30,7 +30,7 @@ params:
   profileMode:
     enabled: true
     title: Xynrin
-    subtitle: 记录折腾，留下痕迹
+    subtitle: 生命不止，折腾不息
     imageUrl: /img/avatar.png
     imageTitle: avatar
     imageWidth: 120
@@ -70,7 +70,6 @@ params:
 
   footer:
     since: 2026
-    customText: '本站源码遵循 <a href="https://github.com/Xynrin/Xynrin.github.io/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0</a> 协议开源 | <a href="/changelog/">Changelog</a>'
 
   DateFormat: "2006-01-02"
 
