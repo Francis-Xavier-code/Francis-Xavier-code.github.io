@@ -61,51 +61,15 @@ if res.returncode != 0:
 print_success("代码推送完成！")
 
 # Github Actions status checking
-print_step("正在连接 GitHub Actions 监听部署状态...")
+import webbrowser
 
 REPO = "Xynrin/Xynrin.github.io"
-API_URL = f"https://api.github.com/repos/{REPO}/actions/runs?per_page=1"
-
-# Wait a few seconds for GitHub to register the push and trigger the action
-time.sleep(5)
-
-max_retries = 30 # 30 * 5 = 150 seconds timeout
-for i in range(max_retries):
-    try:
-        req = urllib.request.Request(API_URL)
-        # Adding a User-Agent is required by GitHub API
-        req.add_header('User-Agent', 'Mozilla/5.0')
-        with urllib.request.urlopen(req) as response:
-            data = json.loads(response.read().decode())
-            if not data.get('workflow_runs'):
-                continue
-            
-            latest_run = data['workflow_runs'][0]
-            status = latest_run['status']
-            conclusion = latest_run['conclusion']
-            
-            # Simple spinner
-            spinner = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'][i % 10]
-            
-            if status in ['queued', 'in_progress']:
-                sys.stdout.write(f"\r{C_YELLOW}{spinner} 远程服务器正在编译打包网站中 (状态: {status})...{C_RESET}")
-                sys.stdout.flush()
-            elif status == 'completed':
-                print("\n")
-                if conclusion == 'success':
-                    print_success("🎉 远程部署大成功！你的网站已经更新至最新版本！")
-                    print_step("可以直接在浏览器访问: https://xynrin.github.io")
-                else:
-                    print_error(f"⚠️ 远程部署失败了 (原因: {conclusion})，请登录 GitHub Actions 查看详情！")
-                break
-    except Exception as e:
-        sys.stdout.write(f"\r{C_YELLOW}⚠ 正在尝试获取 GitHub 状态...{C_RESET}")
-        sys.stdout.flush()
-        
-    time.sleep(5)
-else:
-    print("\n")
-    print_error("等待 GitHub 返回状态超时，但你的代码已经推送成功。请稍后自行访问博客检查。")
+print_step("正在通过浏览器打开 GitHub Actions 面板...")
+try:
+    webbrowser.open(f"https://github.com/{REPO}/actions")
+    print_success("已自动为你打开浏览器！你可以在网页上直观地查看部署进度。")
+except Exception:
+    print_step(f"自动打开失败，请手动访问: https://github.com/{REPO}/actions")
 
 print("\n")
-input("按回车键退出...")
+input("按回车键退出本窗口...")

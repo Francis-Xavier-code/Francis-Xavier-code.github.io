@@ -45,6 +45,8 @@ if not title:
 tags_input = prompt_input("3. 请输入标签 (多个用逗号分隔, 直接回车留空): ")
 tags = [t.strip() for t in tags_input.split(',')] if tags_input else []
 
+description = prompt_input("4. 请输入文章简介 (可选, 直接回车留空): ")
+
 target_dir = os.path.join("content", "post", folder_name)
 target_file = os.path.join(target_dir, "index.md")
 
@@ -63,7 +65,7 @@ with open(target_file, "w", encoding="utf-8") as f:
     f.write(f'title: "{title}"\n')
     f.write(f'date: {date_str}\n')
     f.write(f'slug: "{folder_name}"\n')
-    f.write('description: ""\n')
+    f.write(f'description: "{description}"\n')
     f.write('categories:\n')
     f.write('  - 随笔\n')
     if tags:
@@ -90,4 +92,5 @@ except Exception:
     os.startfile(target_file)
 
 print_success("一切就绪！祝写作愉快~")
-time.sleep(2)
+print("\n")
+input("按回车键退出本窗口...")
