@@ -1,27 +1,5 @@
 {{- if not (.Param "hideFooter") }}
 <footer class="footer">
-    {{/* CUSTOM: Changelog and Github open source text */}}
-    <div class="footer-custom-text" style="margin-bottom: 5px; font-size: 14px; color: var(--secondary);">
-        <a href="/changelog/">Changelog</a> | 本站源码遵循 <a href="https://github.com/Xynrin/Xynrin.github.io" target="_blank" rel="noopener">GPL-3.0</a> 协议开源
-    </div>
-
-    {{/* CUSTOM: Busuanzi stats */}}
-    {{ if site.Params.analytics.busuanzi.enabled }}
-    <div class="site-stats" style="margin-bottom: 5px; font-size: 14px; color: var(--secondary);">
-        {{ with site.Params.since }}
-        <span class="stat-item" style="margin-right: 15px;">
-            ⏱ 已运行 <span id="site-uptime">--</span>
-        </span>
-        {{ end }}
-        <span class="stat-item" style="margin-right: 15px;">
-            👁 总访问 <span id="busuanzi_value_site_pv">--</span> 次
-        </span>
-        <span class="stat-item">
-            👤 访客 <span id="busuanzi_value_site_uv">--</span> 人
-        </span>
-    </div>
-    {{ end }}
-
     {{- if not site.Params.footer.hideCopyright }}
         {{- if site.Copyright }}
         <span>{{ site.Copyright | markdownify }}</span>
@@ -36,6 +14,32 @@
         <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
         <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
     </span>
+
+    {{/* CUSTOM: Changelog and Github open source text */}}
+    <div class="footer-custom-text" style="margin-top: 8px;">
+        <a href="/changelog/">Changelog</a>
+        <span style="margin: 0 8px;">|</span>
+        本站源码遵循 <a href="https://github.com/Xynrin/Xynrin.github.io" target="_blank" rel="noopener">GPL-3.0</a> 协议
+    </div>
+
+    {{/* CUSTOM: Busuanzi stats */}}
+    {{ if site.Params.analytics.busuanzi.enabled }}
+    <div class="site-stats" style="margin-top: 8px;">
+        {{ with site.Params.since }}
+        <span class="stat-item">
+            ⏱ <span id="site-uptime">--</span>
+        </span>
+        <span style="margin: 0 8px;">|</span>
+        {{ end }}
+        <span class="stat-item">
+            👁 <span id="busuanzi_value_site_pv">--</span> 次
+        </span>
+        <span style="margin: 0 8px;">|</span>
+        <span class="stat-item">
+            👤 <span id="busuanzi_value_site_uv">--</span> 人
+        </span>
+    </div>
+    {{ end }}
 </footer>
 {{- end }}
 

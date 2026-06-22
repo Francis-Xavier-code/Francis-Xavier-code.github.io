@@ -2,7 +2,7 @@ baseURL: https://xynrin.github.io
 locale: zh-cn
 defaultContentLanguage: zh-cn
 hasCJKLanguage: true
-title: XYNRIN-BLOG
+title: "Xynrin's Blog"
 theme: PaperMod
 
 outputs:
@@ -27,6 +27,8 @@ permalinks:
   page: /:slug/
 
 params:
+  ShowWordCount: true
+  ShowReadingTime: true
   profileMode:
     enabled: true
     title: Xynrin
@@ -71,7 +73,7 @@ params:
   footer:
     since: 2026
 
-  DateFormat: "2006-01-02"
+  DateFormat: "2006年01月02日"
 
   sidebar:
     emoji: "✨"
