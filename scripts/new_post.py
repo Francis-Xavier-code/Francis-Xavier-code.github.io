@@ -78,16 +78,16 @@ with open(target_file, "w", encoding="utf-8") as f:
 print_success(f"文章已创建: {target_file}")
 print_step("正在唤起 Typora 编辑器...")
 
-# 尝试在 PATH 中直接唤醒 typora
-res = subprocess.run(["typora", target_file], shell=True, capture_output=True)
-if res.returncode != 0:
-    # 尝试常见的系统安装路径
+# 尝试在 PATH 中直接唤醒 typora (非阻塞模式)
+try:
     typora_path = r"C:\Program Files\Typora\Typora.exe"
     if os.path.exists(typora_path):
-        subprocess.run([typora_path, target_file])
+        subprocess.Popen([typora_path, target_file], creationflags=subprocess.DETACHED_PROCESS)
     else:
-        print_step("未在系统路径中找到 Typora，将使用系统默认 Markdown 软件打开...")
+        # 尝试通过默认关联打开
         os.startfile(target_file)
+except Exception:
+    os.startfile(target_file)
 
 print_success("一切就绪！祝写作愉快~")
 time.sleep(2)
