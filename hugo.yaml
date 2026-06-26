@@ -29,6 +29,7 @@ permalinks:
 params:
   ShowWordCount: true
   ShowReadingTime: true
+  ShowCodeCopyButtons: true
   profileMode:
     enabled: true
     title: Xynrin
