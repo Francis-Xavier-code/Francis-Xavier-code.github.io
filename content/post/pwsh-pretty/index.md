@@ -1,5 +1,5 @@
 ---
-title: pwsh-pretty：打造高颜值且顺手的 PowerShell 7 终端
+title: 美化你的的 PowerShell 7 终端
 date: 2026-06-27
 slug: pwsh-pretty
 description: 一条命令，把朴素的 PowerShell 7 变成好看又顺手的终端，集成 eza, fzf, bat, zoxide, fastfetch 等效率神兵。
