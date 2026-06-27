@@ -1,6 +1,0 @@
-{{/* Override head.html to add Google verification */}}
-{{- define "head" -}}
-  {{- if or .Site.Params.googleSiteVerification -}}
-    <meta name="google-site-verification" content="{{ .Site.Params.googleSiteVerification }}" />
-  {{- end -}}
-{{- end -}}
