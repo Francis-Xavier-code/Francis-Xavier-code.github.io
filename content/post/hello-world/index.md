@@ -21,6 +21,8 @@ draft: false
 
 后续文章持续更新中。
 
+可以滑动界面到底部查看changelog
+
 ```python
 def hello():
     print("Hello, world!")
