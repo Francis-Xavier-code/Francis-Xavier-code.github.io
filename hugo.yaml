@@ -108,6 +108,8 @@ params:
       loading: lazy
 
   analytics:
+    google:
+      SiteVerificationTag: "2dTPklx6cOydPSINuCHxypLaCezdhnuyPBVY7rd189s"
     busuanzi:
       enabled: true
 
