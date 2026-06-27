@@ -27,3 +27,17 @@
 })();
 </script>
 {{- end -}}
+
+{{- if and .Site.Params.adsense.enabled .Site.Params.adsense.articleSlot -}}
+<div class="article-adsense" style="margin-top: 2rem; text-align: center;">
+    <ins class="adsbygoogle"
+         style="display:block; text-align:center;"
+         data-ad-client="{{ .Site.Params.adsense.client }}"
+         data-ad-slot="{{ .Site.Params.adsense.articleSlot }}"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
+{{- end -}}
