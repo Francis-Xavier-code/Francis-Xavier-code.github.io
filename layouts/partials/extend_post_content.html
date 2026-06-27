@@ -1,0 +1,29 @@
+{{- $cfg := .Site.Params.reward -}}
+{{- if and $cfg.enabled (ne .Params.reward false) -}}
+<section class="reward">
+    <button class="reward-trigger" type="button" id="reward-trigger">
+        <span class="reward-emoji">☕</span>
+        <span>{{ default "请我喝杯咖啡" $cfg.comment }}</span>
+    </button>
+    <div class="reward-popup" id="reward-popup" style="display: none;">
+        <img src="{{ $cfg.image | absURL }}" alt="赞赏" />
+        <p class="reward-tip">扫码支持作者 ✨</p>
+    </div>
+</section>
+<script>
+(function(){
+    const btn = document.getElementById('reward-trigger');
+    const pop = document.getElementById('reward-popup');
+    if (!btn || !pop) return;
+    btn.addEventListener('click', () => {
+        if (pop.style.display === 'none') {
+            pop.style.display = 'block';
+            btn.classList.add('active');
+        } else {
+            pop.style.display = 'none';
+            btn.classList.remove('active');
+        }
+    });
+})();
+</script>
+{{- end -}}

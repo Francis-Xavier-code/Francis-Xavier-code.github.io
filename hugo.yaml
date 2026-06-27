@@ -51,6 +51,9 @@ params:
   featuredImageField: image
   rssFullContent: true
   favicon: img/favicon.png
+  assets:
+    favicon: img/favicon.png
+  description: "Xynrin的个人博客，记录技术折腾与日常思考。"
 
   sidebarBanner:
     image: img/my-linux-do.png
