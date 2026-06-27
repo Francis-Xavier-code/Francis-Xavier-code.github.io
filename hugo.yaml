@@ -27,6 +27,7 @@ permalinks:
   page: /:slug/
 
 params:
+  googleSiteVerification: "2dTPklx6cOydPSINuCHxypLaCezdhnuyPBVY7rd189s"
   ShowWordCount: true
   ShowReadingTime: true
   ShowCodeCopyButtons: true
