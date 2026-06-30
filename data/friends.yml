@@ -1,0 +1,4 @@
+- name: "Dejavu's Blog"
+  url: 'https://blog.dejavu.moe/'
+  avatar: 'https://blog.dejavu.moe/avatar.webp'
+  description: "Just for fun."

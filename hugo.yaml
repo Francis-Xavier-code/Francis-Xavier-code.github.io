@@ -197,7 +197,12 @@ menu:
       name: 关于
       url: /about/
       weight: 30
+    - identifier: friends
+      name: 朋友
+      url: /friends/
+      weight: 35
     - identifier: search
       name: 搜索
       url: /search/
       weight: 40
+
