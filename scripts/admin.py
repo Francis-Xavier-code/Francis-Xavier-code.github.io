@@ -263,23 +263,30 @@ class AdminHTTPHandler(BaseHTTPRequestHandler):
         print(f"[{self.date_time_string()}] {format%args}")
 
     def send_json(self, data, status=200):
+        body_bytes = json.dumps(data, ensure_ascii=False).encode('utf-8')
         self.send_response(status)
         self.send_header('Content-Type', 'application/json; charset=utf-8')
+        self.send_header('Content-Length', str(len(body_bytes)))
+        self.send_header('Connection', 'close')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
-        self.wfile.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))
+        self.wfile.write(body_bytes)
 
     def send_html(self, html, status=200):
+        body_bytes = html.encode('utf-8')
         self.send_response(status)
         self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.send_header('Content-Length', str(len(body_bytes)))
+        self.send_header('Connection', 'close')
         self.end_headers()
-        self.wfile.write(html.encode('utf-8'))
+        self.wfile.write(body_bytes)
 
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Connection', 'close')
         self.end_headers()
 
     def do_GET(self):
@@ -303,14 +310,18 @@ class AdminHTTPHandler(BaseHTTPRequestHandler):
                 elif ext == '.gif': mime = 'image/gif'
                 elif ext == '.webp': mime = 'image/webp'
                 self.send_header('Content-Type', mime)
+                self.send_header('Content-Length', str(os.path.getsize(img_path)))
+                self.send_header('Connection', 'close')
                 self.end_headers()
                 with open(img_path, 'rb') as f:
                     self.wfile.write(f.read())
             else:
                 self.send_response(404)
+                self.send_header('Connection', 'close')
                 self.end_headers()
         else:
             self.send_response(404)
+            self.send_header('Connection', 'close')
             self.end_headers()
 
     def do_POST(self):
