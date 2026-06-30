@@ -102,7 +102,8 @@ params:
       categoryID: DIC_kwDOSiCzDM4C9Z8_
       mapping: pathname
       lightTheme: light
-      darkTheme: dark_dimmed
+      darkTheme: transparent_dark
+
       reactionsEnabled: 1
       emitMetadata: 0
       inputPosition: top
