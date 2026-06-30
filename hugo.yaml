@@ -12,6 +12,13 @@ outputs:
     - JSON
   page:
     - HTML
+  section:
+    - HTML
+  taxonomy:
+    - HTML
+  term:
+    - HTML
+
 
 outputFormats:
   JSON:
@@ -53,6 +60,7 @@ params:
     - post
   featuredImageField: image
   rssFullContent: true
+  ShowRssButtonInSectionTermList: false
   favicon: img/favicon.png
   assets:
     favicon: img/favicon.png

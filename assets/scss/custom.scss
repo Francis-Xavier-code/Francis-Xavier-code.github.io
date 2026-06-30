@@ -773,3 +773,97 @@ kbd {
     from { transform: scale(0.85); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+
+/* ============ Sticky Sidebar TOC ============ */
+@media screen and (min-width: 1280px) {
+    .post-single {
+        max-width: 1160px !important;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 780px) 300px;
+        column-gap: 50px;
+        align-items: start;
+    }
+    .post-header {
+        grid-column: 1;
+    }
+    .post-content {
+        grid-column: 1;
+    }
+    .post-footer {
+        grid-column: 1;
+    }
+    .comments {
+        grid-column: 1;
+        max-width: 780px;
+    }
+    .toc {
+        grid-column: 2;
+        grid-row: 2 / 5; /* Starts below header, parallel to content */
+        position: sticky;
+        top: 100px;
+        height: fit-content;
+        max-height: calc(100vh - 140px);
+        overflow-y: auto;
+        border: 1px solid var(--border) !important;
+        border-radius: 8px !important;
+        background: var(--code-bg) !important;
+        padding: 15px !important;
+        font-size: 13px !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        width: 300px !important;
+        box-sizing: border-box;
+    }
+    .toc details {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: block !important;
+    }
+    .toc details > * {
+        display: block !important;
+    }
+    .toc details summary {
+        cursor: default !important;
+        pointer-events: none; /* Disable collapsing on desktop */
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .toc details summary::-webkit-details-marker {
+        display: none !important;
+    }
+    .toc details[open] summary {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 8px;
+    }
+    .toc .inner {
+        padding: 0 !important;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+    .toc .inner ul {
+        list-style-type: none;
+        padding-left: 10px;
+        margin: 0;
+    }
+    .toc .inner ul li {
+        margin: 6px 0;
+    }
+    .toc .inner a {
+        color: var(--secondary);
+        text-decoration: none;
+        transition: color 0.15s ease;
+        display: block;
+        line-height: 1.4;
+    }
+    .toc .inner a:hover {
+        color: var(--accent-color) !important;
+    }
+}
