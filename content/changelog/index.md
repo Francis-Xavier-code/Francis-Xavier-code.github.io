@@ -3,7 +3,7 @@ title: "Changelog"
 type: "page"
 comments: false
 ShowReadingTime: false
-ShowWordCount: false
+ShowWordCount: true
 ShowPostNavLinks: false
 ---
 
@@ -13,6 +13,8 @@ ShowPostNavLinks: false
 
 ---
 
+
+
 ## 2026-06-30
 
 ### 新增
@@ -21,7 +23,7 @@ ShowPostNavLinks: false
 ## 2026-06-22
 
 ### 变更
-- 更换主题为 **Hugo PaperMod**，拥有更极简的阅读体验。
+- 更换主题为 **[Hugo PaperMod](https://themes.gohugo.io/themes/hugo-papermod/)**，拥有更极简的阅读体验。
 - 重构主页为 **个人名片模式 (Profile Mode)**。
 - 全站本地图片路径重构，支持在本地 Markdown 编辑器内直接肉眼预览图片。
 
