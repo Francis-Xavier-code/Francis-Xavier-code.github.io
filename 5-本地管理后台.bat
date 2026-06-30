@@ -1,0 +1,3 @@
+@echo off
+echo Starting Xynrin Blog Local Admin...
+python scripts/admin.py
