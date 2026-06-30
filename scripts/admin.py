@@ -31,28 +31,43 @@ def parse_md(filepath):
         front_matter_str = parts[1]
         body = parts[2].strip()
         # Parse simple YAML-like lines
-        for line in front_matter_str.strip().split('\n'):
-            line = line.strip()
+        lines = front_matter_str.strip().split('\n')
+        i = 0
+        while i < len(lines):
+            raw_line = lines[i]
+            line = raw_line.strip()
+            i += 1
             if not line or line.startswith('#'):
+                continue
+            # Block-style list item belonging to a previous key is consumed below,
+            # so a bare "- item" line here is unexpected and gets skipped.
+            if line.startswith('- '):
                 continue
             if ':' in line:
                 key, val = line.split(':', 1)
                 key = key.strip()
                 val = val.strip()
+                # Block-style list: "key:" followed by indented "- item" lines
+                if val == '':
+                    items = []
+                    while i < len(lines) and lines[i].strip().startswith('- '):
+                        item = lines[i].strip()[2:].strip()
+                        item = item.strip('"').strip("'")
+                        items.append(item)
+                        i += 1
+                    if items:
+                        val = items
                 # Handle boolean
-                if val.lower() == 'true':
+                elif val.lower() == 'true':
                     val = True
                 elif val.lower() == 'false':
                     val = False
                 # Handle string quotes
                 elif (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
                     val = val[1:-1]
-                # Handle simple list
+                # Handle inline list
                 elif val.startswith('[') and val.endswith(']'):
                     val = [v.strip().strip('"').strip("'") for v in val[1:-1].split(',') if v.strip()]
-                # Handle list in block style
-                elif val == '':
-                    pass
                 fm[key] = val
     return fm, body
 
@@ -382,17 +397,25 @@ def get_index_html():
     <title>Xynrin's Blog - 本地管理后台</title>
     <style>
         :root {
-            --bg-color: #1d1e20;
-            --card-bg: #2e2e33;
-            --text-color: #f8f9fa;
-            --text-muted: #a5a6a7;
-            --border-color: #3e3e43;
-            --primary-color: #3b82f6;
-            --primary-hover: #2563eb;
-            --danger-color: #ef4444;
-            --success-color: #10b981;
-            --radius: 8px;
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-color: #131417;
+            --bg-soft: #1a1c20;
+            --card-bg: #1f2228;
+            --card-hover: #262a31;
+            --text-color: #e8eaed;
+            --text-muted: #9298a1;
+            --border-color: #2d313a;
+            --border-soft: #23262d;
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-soft: rgba(99, 102, 241, 0.12);
+            --danger-color: #f05252;
+            --danger-hover: #e02424;
+            --success-color: #0e9f6e;
+            --warning-color: #f59e0b;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.4);
         }
 
         * {
@@ -401,44 +424,77 @@ def get_index_html():
             padding: 0;
         }
 
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 6px;
+            border: 2px solid var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb:hover { background: #3a3f48; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.5;
+            line-height: 1.6;
             display: flex;
             height: 100vh;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
+
 
         /* Sidebar */
         .sidebar {
-            width: 260px;
-            background-color: #151618;
-            border-right: 1px solid var(--border-color);
+            width: 248px;
+            background-color: var(--bg-soft);
+            border-right: 1px solid var(--border-soft);
             display: flex;
             flex-direction: column;
-            padding: 1.5rem;
+            padding: 1.5rem 1rem;
             flex-shrink: 0;
         }
 
         .logo-area {
-            font-size: 1.25rem;
-            font-weight: bold;
+            font-size: 1.15rem;
+            font-weight: 700;
             color: var(--text-color);
-            margin-bottom: 2rem;
+            margin-bottom: 1.75rem;
             display: flex;
             align-items: center;
             gap: 10px;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 0 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .logo-area .logo-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 12px -2px rgba(99, 102, 241, 0.5);
+        }
+
+        .menu-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            padding: 0 0.75rem;
+            margin-bottom: 0.6rem;
         }
 
         .menu-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
             flex-grow: 1;
         }
 
@@ -446,24 +502,36 @@ def get_index_html():
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            border-radius: var(--radius);
+            padding: 11px 14px;
+            border-radius: var(--radius-sm);
             color: var(--text-muted);
             text-decoration: none;
             cursor: pointer;
             transition: var(--transition);
             font-weight: 500;
+            font-size: 14px;
+            user-select: none;
         }
 
-        .menu-item:hover, .menu-item.active {
-            background-color: var(--card-bg);
+        .menu-item .menu-icon { font-size: 17px; width: 20px; text-align: center; }
+
+        .menu-item:hover {
+            background-color: var(--card-hover);
             color: var(--text-color);
         }
 
         .menu-item.active {
-            border-left: 4px solid var(--primary-color);
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
+            background-color: var(--primary-soft);
+            color: #c7d2fe;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: auto;
+            padding-top: 1rem;
         }
 
         /* Main Content */
@@ -472,24 +540,48 @@ def get_index_html():
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.05), transparent 400px);
         }
 
         .header {
-            height: 60px;
-            border-bottom: 1px solid var(--border-color);
+            height: 64px;
+            border-bottom: 1px solid var(--border-soft);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 2rem;
             flex-shrink: 0;
+            background-color: var(--bg-soft);
+        }
+
+        #page-title { font-size: 1.05rem; font-weight: 600; }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--card-bg);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-soft);
+        }
+
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--success-color);
+            box-shadow: 0 0 0 3px rgba(14, 159, 110, 0.2);
         }
 
         .content-body {
             padding: 2rem;
             overflow-y: auto;
             flex-grow: 1;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
         }
+
 
         /* Page Container */
         .page {
@@ -514,80 +606,90 @@ def get_index_html():
             margin-bottom: 1.5rem;
         }
 
+        .panel-header h3 { font-size: 1.1rem; font-weight: 600; }
+
         .btn {
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: var(--radius);
+            padding: 9px 16px;
+            border-radius: var(--radius-sm);
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            font-size: 14px;
+            gap: 6px;
+            font-size: 13.5px;
+            white-space: nowrap;
         }
 
         .btn:hover {
             background-color: var(--primary-hover);
+            transform: translateY(-1px);
         }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-        .btn-danger {
-            background-color: var(--danger-color);
-        }
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
+        .btn-danger { background-color: var(--danger-color); }
+        .btn-danger:hover { background-color: var(--danger-hover); }
         .btn-secondary {
-            background-color: #4b5563;
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
         }
         .btn-secondary:hover {
-            background-color: #374151;
+            background-color: var(--card-hover);
+            color: var(--text-color);
+        }
+        .btn-icon {
+            padding: 8px 10px;
+            font-size: 13px;
         }
 
         .card {
             background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-soft);
             border-radius: var(--radius);
             padding: 1.5rem;
             margin-bottom: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         /* Lists Table/Cards */
         .item-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .list-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 1rem;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
             background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-soft);
             border-radius: var(--radius);
             transition: var(--transition);
         }
 
         .list-row:hover {
-            border-color: #4e4e53;
-            transform: translateY(-2px);
+            border-color: var(--border-color);
+            background-color: var(--card-hover);
         }
 
         .item-meta {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
             min-width: 0;
+            flex-grow: 1;
         }
 
         .item-title {
-            font-weight: bold;
-            font-size: 16px;
+            font-weight: 600;
+            font-size: 15px;
             color: var(--text-color);
             white-space: nowrap;
             overflow: hidden;
@@ -598,23 +700,25 @@ def get_index_html():
             font-size: 12px;
             color: var(--text-muted);
             display: flex;
-            gap: 12px;
+            gap: 14px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .badge {
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 3px 8px;
+            border-radius: 20px;
             font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.03em;
         }
         .badge-draft {
-            background-color: #f59e0b;
-            color: #1e1b4b;
+            background-color: rgba(245, 158, 11, 0.15);
+            color: var(--warning-color);
         }
         .badge-pub {
-            background-color: var(--success-color);
-            color: #064e3b;
+            background-color: rgba(14, 159, 110, 0.15);
+            color: #34d399;
         }
 
         .actions {
@@ -622,6 +726,17 @@ def get_index_html():
             gap: 8px;
             flex-shrink: 0;
         }
+
+        .empty-state {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 3rem 1rem;
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius);
+            font-size: 14px;
+        }
+        .empty-state .empty-icon { font-size: 32px; display: block; margin-bottom: 0.5rem; opacity: 0.5; }
+
 
         /* Forms */
         .form-group {
@@ -638,99 +753,134 @@ def get_index_html():
 
         .form-control {
             width: 100%;
-            background-color: #1d1e20;
+            background-color: var(--bg-soft);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            padding: 11px 14px;
             color: var(--text-color);
             font-size: 14px;
             outline: none;
             transition: var(--transition);
         }
 
+        .form-control::placeholder { color: #5f656e; }
+
         .form-control:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 3px var(--primary-soft);
         }
 
         textarea.form-control {
-            min-height: 120px;
+            min-height: 130px;
             resize: vertical;
             font-family: inherit;
+            line-height: 1.6;
         }
+
+        .form-hint { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
 
         /* Dropzone */
         .dropzone {
-            border: 2px dashed var(--border-color);
-            padding: 2rem;
+            border: 1.5px dashed var(--border-color);
+            padding: 1.75rem;
             text-align: center;
-            border-radius: var(--radius);
+            border-radius: var(--radius-sm);
             cursor: pointer;
             transition: var(--transition);
-            background-color: rgba(255, 255, 255, 0.01);
+            background-color: var(--bg-soft);
         }
 
-        .dropzone:hover {
+        .dropzone:hover, .dropzone.dragover {
             border-color: var(--primary-color);
-            background-color: rgba(59, 130, 246, 0.02);
+            background-color: var(--primary-soft);
         }
+        .dropzone-hint { font-size: 13.5px; color: var(--text-muted); }
 
         .preview-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
             gap: 10px;
             margin-top: 1rem;
         }
 
+        .preview-item { position: relative; }
+
         .preview-img {
-            width: 80px;
-            height: 80px;
+            width: 100%;
+            height: 84px;
             object-fit: cover;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             border: 1px solid var(--border-color);
-            position: relative;
+            display: block;
+        }
+
+        .preview-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--danger-color);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            border: 2px solid var(--bg-color);
+        }
+
+        .memo-thumb {
+            width: 64px; height: 64px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
         }
 
         /* Terminal Console */
         .console {
-            background-color: #101112;
-            font-family: Consolas, Monaco, "Courier New", monospace;
-            padding: 1.5rem;
+            background-color: #0b0c0e;
+            font-family: "Cascadia Code", Consolas, Monaco, "Courier New", monospace;
+            padding: 1.25rem 1.5rem;
             border-radius: var(--radius);
-            min-height: 300px;
-            max-height: 500px;
+            min-height: 280px;
+            max-height: 480px;
             overflow-y: auto;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-soft);
             color: #34d399;
             font-size: 13px;
             white-space: pre-wrap;
+            word-break: break-all;
         }
 
         /* Modal styling */
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(6px);
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
         .modal-content {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: var(--radius);
-            width: 500px;
+            width: 480px;
             max-width: 90%;
-            padding: 1.5rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+            animation: modalIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-content h3 { font-size: 1.15rem; font-weight: 600; }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         /* Alerts */
@@ -740,32 +890,38 @@ def get_index_html():
             right: 2rem;
             background-color: var(--success-color);
             color: white;
-            padding: 12px 24px;
-            border-radius: var(--radius);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            transform: translateY(100px);
+            padding: 13px 22px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            transform: translateY(120px);
             opacity: 0;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 2000;
+            font-size: 14px;
+            font-weight: 500;
+            max-width: 360px;
         }
         .toast.show {
             transform: translateY(0);
             opacity: 1;
         }
+
     </style>
 </head>
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="logo-area">
-            <span>🫧 Xynrin Admin</span>
+            <span class="logo-icon">🫧</span>
+            <span>Xynrin Admin</span>
         </div>
+        <div class="menu-label">管理菜单</div>
         <ul class="menu-list">
-            <li class="menu-item active" onclick="switchPage('posts-page', this)">📝 文章管理</li>
-            <li class="menu-item" onclick="switchPage('memos-page', this)">🫧 瞬间记录</li>
-            <li class="menu-item" onclick="switchPage('deploy-page', this)">🚀 网站发布</li>
+            <li class="menu-item active" onclick="switchPage('posts-page', this)"><span class="menu-icon">📝</span> 文章管理</li>
+            <li class="menu-item" onclick="switchPage('memos-page', this)"><span class="menu-icon">🫧</span> 瞬间记录</li>
+            <li class="menu-item" onclick="switchPage('deploy-page', this)"><span class="menu-icon">🚀</span> 网站发布</li>
         </ul>
-        <div style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: auto;">
+        <div class="sidebar-footer">
             Xynrin.github.io &copy; 2026
         </div>
     </div>
@@ -773,11 +929,12 @@ def get_index_html():
     <!-- Main Container -->
     <div class="main-container">
         <div class="header">
-            <h2 id="page-title" style="font-size: 1.125rem;">文章管理</h2>
-            <div id="status-indicator" style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted);">
-                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--success-color);"></div> 本地服务已连接
+            <h2 id="page-title">文章管理</h2>
+            <div class="status-indicator">
+                <span class="status-dot"></span> 本地服务已连接
             </div>
         </div>
+
 
         <div class="content-body">
             <!-- PAGE: Posts -->
@@ -805,10 +962,10 @@ def get_index_html():
                         <div class="form-group">
                             <label>上传图片（支持拖拽或点击多选，上限 9 张）</label>
                             <div class="dropzone" onclick="document.getElementById('memo-images-input').click()" id="dropzone">
-                                <span style="font-size: 14px; color: var(--text-muted);">拖拽图片到这里，或点击选择图片上传</span>
+                                <span class="dropzone-hint">📷 拖拽图片到这里，或点击选择图片上传</span>
                                 <input type="file" id="memo-images-input" multiple accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
-                                <div id="previews" class="preview-container"></div>
                             </div>
+                            <div id="previews" class="preview-container"></div>
                         </div>
                         <button type="button" class="btn" onclick="submitMemo()" id="memo-submit-btn">发布瞬间</button>
                     </form>
@@ -868,6 +1025,15 @@ def get_index_html():
     <script>
         let selectedFiles = [];
 
+        function escapeHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function switchPage(pageId, menuItem) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
@@ -911,29 +1077,31 @@ def get_index_html():
             list.innerHTML = '';
             
             if (posts.length === 0) {
-                list.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">当前无任何文章</div>';
+                list.innerHTML = '<div class="empty-state"><span class="empty-icon">📭</span>当前还没有任何文章，点击右上角新增一篇吧</div>';
                 return;
             }
 
             posts.forEach(post => {
                 const dateStr = post.date ? post.date.substring(0, 10) : '无日期';
-                const badge = post.draft ? 
-                    '<span class="badge badge-draft">草稿</span>' : 
+                const badge = post.draft ?
+                    '<span class="badge badge-draft">草稿</span>' :
                     '<span class="badge badge-pub">已发布</span>';
-                
+                const safeTitle = escapeHtml(post.title);
+                const safeSlug = escapeHtml(post.slug);
+
                 list.innerHTML += `
                     <div class="list-row">
                         <div class="item-meta">
-                            <div class="item-title" title="${post.title}">${post.title}</div>
+                            <div class="item-title" title="${safeTitle}">${safeTitle}</div>
                             <div class="item-subtitle">
                                 <span>📅 ${dateStr}</span>
-                                <span>📁 content/post/${post.slug}</span>
+                                <span>📁 content/post/${safeSlug}</span>
                                 ${badge}
                             </div>
                         </div>
                         <div class="actions">
-                            <button class="btn btn-secondary" onclick="editPost('${post.slug}')">✒️ 编辑</button>
-                            <button class="btn btn-danger" onclick="deletePost('${post.slug}')">🗑️ 删除</button>
+                            <button class="btn btn-secondary btn-icon" onclick="editPost('${safeSlug}')">✒️ 编辑</button>
+                            <button class="btn btn-danger btn-icon" onclick="deletePost('${safeSlug}')">🗑️ 删除</button>
                         </div>
                     </div>
                 `;
@@ -994,33 +1162,35 @@ def get_index_html():
             list.innerHTML = '';
 
             if (memos.length === 0) {
-                list.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">当前无任何瞬间记录</div>';
+                list.innerHTML = '<div class="empty-state"><span class="empty-icon">🫧</span>还没有记录任何瞬间，在上方写下第一条吧</div>';
                 return;
             }
 
             memos.forEach(memo => {
                 let imgHtml = '';
                 if (memo.images && memo.images.length > 0) {
-                    imgHtml = '<div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">';
+                    imgHtml = '<div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">';
                     memo.images.forEach(img => {
-                        imgHtml += `<img src="${img}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">`;
+                        imgHtml += `<img src="${escapeHtml(img)}" class="memo-thumb">`;
                     });
                     imgHtml += '</div>';
                 }
 
                 const dateStr = memo.date ? memo.date.replace('T', ' ').substring(0, 16) : '无时间';
-                
+                const safeContent = escapeHtml(memo.content);
+                const safeId = escapeHtml(memo.id);
+
                 list.innerHTML += `
                     <div class="list-row" style="align-items: flex-start;">
                         <div class="item-meta" style="flex-grow: 1;">
-                            <div style="font-size: 14px; white-space: pre-wrap; color: var(--text-color); line-height: 1.6;">${memo.content}</div>
+                            <div style="font-size: 14px; white-space: pre-wrap; color: var(--text-color); line-height: 1.6; word-break: break-word;">${safeContent}</div>
                             ${imgHtml}
-                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">
-                                <span>📅 ${dateStr}</span> &middot; <span>文件: ${memo.id}</span>
+                            <div style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">
+                                <span>📅 ${dateStr}</span> &middot; <span>文件: ${safeId}</span>
                             </div>
                         </div>
                         <div class="actions" style="align-self: center;">
-                            <button class="btn btn-danger" onclick="deleteMemo('${memo.id}')">🗑️ 删除</button>
+                            <button class="btn btn-danger btn-icon" onclick="deleteMemo('${safeId}')">🗑️ 删除</button>
                         </div>
                     </div>
                 `;
@@ -1030,10 +1200,12 @@ def get_index_html():
         function handleFileSelect(e) {
             const files = Array.from(e.target.files);
             if (selectedFiles.length + files.length > 9) {
-                alert("瞬间最多只能上传 9 张照片！");
+                showToast("瞬间最多只能上传 9 张照片！", true);
+                e.target.value = '';
                 return;
             }
             selectedFiles = selectedFiles.concat(files);
+            e.target.value = '';
             renderPreviews();
         }
 
@@ -1041,16 +1213,22 @@ def get_index_html():
             const container = document.getElementById('previews');
             container.innerHTML = '';
             selectedFiles.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    container.innerHTML += `
-                        <div style="position: relative; display: inline-block;">
-                            <img src="${e.target.result}" class="preview-img">
-                            <span onclick="removePreview(${index})" style="position: absolute; top: -5px; right: -5px; background: var(--danger-color); color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; border: 1px solid var(--bg-color);">✕</span>
-                        </div>
-                    `;
-                }
-                reader.readAsDataURL(file);
+                const item = document.createElement('div');
+                item.className = 'preview-item';
+
+                const img = document.createElement('img');
+                img.className = 'preview-img';
+                img.src = URL.createObjectURL(file);
+                img.onload = () => URL.revokeObjectURL(img.src);
+
+                const remove = document.createElement('span');
+                remove.className = 'preview-remove';
+                remove.textContent = '✕';
+                remove.onclick = () => removePreview(index);
+
+                item.appendChild(img);
+                item.appendChild(remove);
+                container.appendChild(item);
             });
         }
 
@@ -1144,17 +1322,18 @@ def get_index_html():
         const dropzone = document.getElementById('dropzone');
         dropzone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            dropzone.style.borderColor = 'var(--primary-color)';
+            dropzone.classList.add('dragover');
         });
         dropzone.addEventListener('dragleave', () => {
-            dropzone.style.borderColor = 'var(--border-color)';
+            dropzone.classList.remove('dragover');
         });
         dropzone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropzone.style.borderColor = 'var(--border-color)';
+            dropzone.classList.remove('dragover');
             const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+            if (files.length === 0) return;
             if (selectedFiles.length + files.length > 9) {
-                alert("瞬间最多只能上传 9 张照片！");
+                showToast("瞬间最多只能上传 9 张照片！", true);
                 return;
             }
             selectedFiles = selectedFiles.concat(files);
