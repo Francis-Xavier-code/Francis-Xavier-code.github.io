@@ -6,18 +6,10 @@ import subprocess
 import webbrowser
 import shutil
 import re
-
-# Auto-install flask if not present
-try:
-    from flask import Flask, request, jsonify, render_template_string
-except ImportError:
-    print("正在安装管理后台所需的 Flask 库...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "flask"])
-    from flask import Flask, request, jsonify, render_template_string
-
-app = Flask(__name__)
-# Set max upload size to 16MB
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from urllib.parse import urlparse
+from email.parser import BytesParser
+from email.policy import default
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 POSTS_DIR = os.path.join(ROOT_DIR, "content", "post")
@@ -58,6 +50,9 @@ def parse_md(filepath):
                 # Handle simple list
                 elif val.startswith('[') and val.endswith(']'):
                     val = [v.strip().strip('"').strip("'") for v in val[1:-1].split(',') if v.strip()]
+                # Handle list in block style
+                elif val == '':
+                    pass
                 fm[key] = val
     return fm, body
 
@@ -84,12 +79,10 @@ def write_md(filepath, fm, body):
     with open(filepath, 'w', encoding='utf-8', newline='\n') as f:
         f.write('\n'.join(fm_lines))
 
-# API: Get all posts
-@app.route('/api/posts', methods=['GET'])
-def get_posts():
+def get_all_posts_list():
     posts_list = []
     if not os.path.exists(POSTS_DIR):
-        return jsonify([])
+        return []
     for folder in os.listdir(POSTS_DIR):
         folder_path = os.path.join(POSTS_DIR, folder)
         if os.path.isdir(folder_path):
@@ -106,53 +99,41 @@ def get_posts():
                     })
                 except Exception as e:
                     print(f"Error parsing post {folder}: {e}")
-    # Sort by date desc
-    posts_list.sort(key=lambda x: x['date'], reverse=True)
-    return jsonify(posts_list)
+    posts_list.sort(key=lambda x: x.get('date', ''), reverse=True)
+    return posts_list
 
-# API: Create new post
-@app.route('/api/posts', methods=['POST'])
-def create_post():
-    data = request.json
+def handle_create_post(data):
     title = data.get('title', '').strip()
     slug = data.get('slug', '').strip()
     description = data.get('description', '').strip()
     
     if not title or not slug:
-        return jsonify({"status": "error", "message": "标题和 Slug 不能为空"}), 400
+        return {"status": "error", "message": "标题和 Slug 不能为空"}, 400
     
-    # Sanitize slug
     slug = re.sub(r'[^a-zA-Z0-9\-]', '', slug.replace(' ', '-')).lower()
     folder_path = os.path.join(POSTS_DIR, slug)
     if os.path.exists(folder_path):
-        return jsonify({"status": "error", "message": "该 Slug 已存在，请换一个"}), 400
+        return {"status": "error", "message": "该 Slug 已存在，请换一个"}, 400
         
     file_path = os.path.join(folder_path, "index.md")
-    
     fm = {
         "title": title,
         "date": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S+08:00"),
         "draft": True,
         "description": description
     }
-    
     body = "<!-- 在这里开始编写您的文章内容 -->\n"
     write_md(file_path, fm, body)
-    
-    return jsonify({"status": "success", "slug": slug})
+    return {"status": "success", "slug": slug}, 200
 
-# API: Delete post
-@app.route('/api/posts/<slug>', methods=['DELETE'])
-def delete_post(slug):
+def handle_delete_post(slug):
     folder_path = os.path.join(POSTS_DIR, slug)
     if os.path.exists(folder_path):
         shutil.rmtree(folder_path)
-        return jsonify({"status": "success"})
-    return jsonify({"status": "error", "message": "文章不存在"}), 404
+        return {"status": "success"}, 200
+    return {"status": "error", "message": "文章不存在"}, 404
 
-# API: Open post in Typora
-@app.route('/api/posts/edit/<slug>', methods=['POST'])
-def edit_post(slug):
+def handle_edit_post(slug):
     file_path = os.path.join(POSTS_DIR, slug, "index.md")
     if os.path.exists(file_path):
         typora_path = r"C:\Program Files\Typora\Typora.exe"
@@ -160,15 +141,13 @@ def edit_post(slug):
             subprocess.Popen([typora_path, file_path])
         else:
             os.startfile(file_path)
-        return jsonify({"status": "success"})
-    return jsonify({"status": "error", "message": "文件不存在"}), 404
+        return {"status": "success"}, 200
+    return {"status": "error", "message": "文件不存在"}, 404
 
-# API: Get all moments
-@app.route('/api/memos', methods=['GET'])
-def get_memos():
+def get_all_memos_list():
     memos_list = []
     if not os.path.exists(MEMOS_DIR):
-        return jsonify([])
+        return []
     for file in os.listdir(MEMOS_DIR):
         if file.endswith('.md') and file != '_index.md':
             file_path = os.path.join(MEMOS_DIR, file)
@@ -182,56 +161,12 @@ def get_memos():
                 })
             except Exception as e:
                 print(f"Error parsing memo {file}: {e}")
-    # Sort by date desc
-    memos_list.sort(key=lambda x: x['date'], reverse=True)
-    return jsonify(memos_list)
+    memos_list.sort(key=lambda x: x.get('date', ''), reverse=True)
+    return memos_list
 
-# API: Create new moment (with image upload)
-@app.route('/api/memos', methods=['POST'])
-def create_memo():
-    content = request.form.get('content', '').strip()
-    date_str = request.form.get('date', '').strip()
-    
-    if not content:
-        return jsonify({"status": "error", "message": "瞬间内容不能为空"}), 400
-        
-    if not date_str:
-        date_str = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S+08:00")
-        
-    # Generate ID/filename
-    timestamp_slug = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = f"{datetime.datetime.now().strftime('%Y-%m-%d')}-{timestamp_slug}.md"
-    file_path = os.path.join(MEMOS_DIR, filename)
-    
-    images = []
-    
-    # Save uploaded images
-    uploaded_files = request.files.getlist('images')
-    for idx, f in enumerate(uploaded_files):
-        if f.filename:
-            # Get extension
-            ext = os.path.splitext(f.filename)[1].lower()
-            if ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
-                img_name = f"memo-{timestamp_slug}-{idx+1}{ext}"
-                target_path = os.path.join(STATIC_MEMOS_IMG_DIR, img_name)
-                f.save(target_path)
-                images.append(f"/img/memos/{img_name}")
-                
-    fm = {
-        "date": date_str
-    }
-    if images:
-        fm["images"] = images
-        
-    write_md(file_path, fm, content)
-    return jsonify({"status": "success"})
-
-# API: Delete moment
-@app.route('/api/memos/<filename>', methods=['DELETE'])
-def delete_memo(filename):
+def handle_delete_memo(filename):
     file_path = os.path.join(MEMOS_DIR, filename)
     if os.path.exists(file_path):
-        # Also try to delete associated images to save space
         try:
             fm, body = parse_md(file_path)
             for img in fm.get("images", []):
@@ -241,46 +176,193 @@ def delete_memo(filename):
                     if os.path.exists(img_path):
                         os.remove(img_path)
         except Exception as e:
-            print(f"Error clean image: {e}")
+            print(f"Error cleaning image: {e}")
             
         os.remove(file_path)
-        return jsonify({"status": "success"})
-    return jsonify({"status": "error", "message": "瞬间不存在"}), 404
+        return {"status": "success"}, 200
+    return {"status": "error", "message": "瞬间不存在"}, 404
 
-# API: Trigger deploy script
-@app.route('/api/deploy', methods=['POST'])
-def run_deploy():
-    deploy_script = os.path.join(ROOT_DIR, "scripts", "deploy.py")
-    if os.path.exists(deploy_script):
-        # We run it and capture the process.
-        # But deploy.py has `input("按回车键退出本窗口...")` at the end which blocks.
-        # Let's read deploy.py content and execute a modified version or set an environment flag to skip input,
-        # or execute the git commands directly inside python for cleaner control!
-        try:
-            # Let's perform git operations directly for absolute control and safety.
-            cmds = [
-                ["git", "add", "."],
-                ["git", "commit", "-m", f"feat: auto publish {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"],
-                ["git", "push"]
-            ]
-            outputs = []
-            for cmd in cmds:
-                res = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT_DIR)
-                outputs.append(f"$ {' '.join(cmd)}\n{res.stdout}\n{res.stderr}")
-                if cmd[0] == "git" and cmd[1] == "commit" and res.returncode != 0:
-                    if "nothing to commit" in res.stdout or "无文件要提交" in res.stdout or "nothing to commit" in res.stderr:
-                        outputs.append("（无文件变更需要提交，继续推送...）")
-                        continue
+def handle_deploy():
+    try:
+        cmds = [
+            ["git", "add", "."],
+            ["git", "commit", "-m", f"feat: auto publish {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"],
+            ["git", "push"]
+        ]
+        outputs = []
+        for cmd in cmds:
+            res = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT_DIR)
+            outputs.append(f"$ {' '.join(cmd)}\n{res.stdout}\n{res.stderr}")
+            if cmd[0] == "git" and cmd[1] == "commit" and res.returncode != 0:
+                if "nothing to commit" in res.stdout or "无文件要提交" in res.stdout or "nothing to commit" in res.stderr:
+                    outputs.append("（无文件变更需要提交，继续推送...）")
+                    continue
+        return {"status": "success", "log": "\n".join(outputs)}, 200
+    except Exception as e:
+        return {"status": "error", "message": str(e)}, 500
+
+def handle_create_memo(content_type, content_length, rfile):
+    if not content_type or not content_type.startswith('multipart/form-data'):
+        return {"status": "error", "message": "Content-Type must be multipart/form-data"}, 400
+        
+    data_bytes = rfile.read(content_length)
+    headers_raw = f"Content-Type: {content_type}\r\nContent-Length: {content_length}\r\n\r\n".encode('ascii')
+    
+    msg = BytesParser(policy=default).parsebytes(headers_raw + data_bytes)
+    
+    form_fields = {}
+    files = []
+    
+    for part in msg.walk():
+        if part.is_multipart():
+            continue
+        disposition = part.get('Content-Disposition')
+        if disposition:
+            name_match = re.search(r'name="([^"]+)"', disposition)
+            filename_match = re.search(r'filename="([^"]+)"', disposition)
+            if name_match:
+                name = name_match.group(1)
+                payload = part.get_payload(decode=True)
+                if filename_match:
+                    filename = filename_match.group(1)
+                    if filename:
+                        files.append((name, filename, payload))
+                else:
+                    form_fields[name] = payload.decode('utf-8')
+                    
+    content = form_fields.get('content', '').strip()
+    if not content:
+        return {"status": "error", "message": "瞬间内容不能为空"}, 400
+        
+    timestamp_slug = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"{datetime.datetime.now().strftime('%Y-%m-%d')}-{timestamp_slug}.md"
+    file_path = os.path.join(MEMOS_DIR, filename)
+    
+    images = []
+    for idx, (field_name, original_filename, payload) in enumerate(files):
+        ext = os.path.splitext(original_filename)[1].lower()
+        if ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
+            img_name = f"memo-{timestamp_slug}-{idx+1}{ext}"
+            target_path = os.path.join(STATIC_MEMOS_IMG_DIR, img_name)
+            with open(target_path, 'wb') as f:
+                f.write(payload)
+            images.append(f"/img/memos/{img_name}")
             
-            return jsonify({"status": "success", "log": "\n".join(outputs)})
-        except Exception as e:
-            return jsonify({"status": "error", "message": str(e)})
-    return jsonify({"status": "error", "message": "未找到 deploy.py 脚本"}), 404
+    fm = {
+        "date": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S+08:00")
+    }
+    if images:
+        fm["images"] = images
+        
+    write_md(file_path, fm, content)
+    return {"status": "success"}, 200
 
-# Main Dashboard View
-@app.route('/')
-def index():
-    html_content = """
+class AdminHTTPHandler(BaseHTTPRequestHandler):
+    def log_message(self, format, *args):
+        # Print logs to console
+        print(f"[{self.date_time_string()}] {format%args}")
+
+    def send_json(self, data, status=200):
+        self.send_response(status)
+        self.send_header('Content-Type', 'application/json; charset=utf-8')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        self.wfile.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))
+
+    def send_html(self, html, status=200):
+        self.send_response(status)
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.end_headers()
+        self.wfile.write(html.encode('utf-8'))
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
+
+    def do_GET(self):
+        parsed_url = urlparse(self.path)
+        path = parsed_url.path
+
+        if path == '/':
+            self.send_html(get_index_html())
+        elif path == '/api/posts':
+            self.send_json(get_all_posts_list())
+        elif path == '/api/memos':
+            self.send_json(get_all_memos_list())
+        elif path.startswith('/img/memos/'):
+            img_filename = path.split('/')[-1]
+            img_path = os.path.join(STATIC_MEMOS_IMG_DIR, img_filename)
+            if os.path.exists(img_path):
+                self.send_response(200)
+                ext = os.path.splitext(img_path)[1].lower()
+                mime = 'image/png'
+                if ext in ['.jpg', '.jpeg']: mime = 'image/jpeg'
+                elif ext == '.gif': mime = 'image/gif'
+                elif ext == '.webp': mime = 'image/webp'
+                self.send_header('Content-Type', mime)
+                self.end_headers()
+                with open(img_path, 'rb') as f:
+                    self.wfile.write(f.read())
+            else:
+                self.send_response(404)
+                self.end_headers()
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def do_POST(self):
+        parsed_url = urlparse(self.path)
+        path = parsed_url.path
+
+        if path == '/api/posts':
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode('utf-8')
+            data = json.loads(body)
+            res, status = handle_create_post(data)
+            self.send_json(res, status)
+            
+        elif path.startswith('/api/posts/edit/'):
+            slug = path.split('/')[-1]
+            res, status = handle_edit_post(slug)
+            self.send_json(res, status)
+            
+        elif path == '/api/memos':
+            content_type = self.headers.get('Content-Type')
+            content_length = int(self.headers.get('Content-Length', 0))
+            res, status = handle_create_memo(content_type, content_length, self.rfile)
+            self.send_json(res, status)
+            
+        elif path == '/api/deploy':
+            res, status = handle_deploy()
+            self.send_json(res, status)
+            
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+    def do_DELETE(self):
+        parsed_url = urlparse(self.path)
+        path = parsed_url.path
+
+        if path.startswith('/api/posts/'):
+            slug = path.split('/')[-1]
+            res, status = handle_delete_post(slug)
+            self.send_json(res, status)
+            
+        elif path.startswith('/api/memos/'):
+            filename = path.split('/')[-1]
+            res, status = handle_delete_memo(filename)
+            self.send_json(res, status)
+            
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+def get_index_html():
+    return """
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -887,7 +969,6 @@ def index():
                 showToast("文章创建成功！即将自动唤起编辑器...");
                 closeModal('new-post-modal');
                 loadPosts();
-                // Edit immediately
                 setTimeout(() => editPost(data.slug), 1000);
             } else {
                 showToast(data.message, true);
@@ -1020,7 +1101,6 @@ def index():
             }
         }
 
-        // --- Deploy Logics ---
         async function runDeploy() {
             const btn = document.getElementById('deploy-btn');
             const consoleDiv = document.getElementById('console');
@@ -1033,7 +1113,7 @@ def index():
                 const res = await fetch('/api/deploy', { method: 'POST' });
                 const data = await res.json();
                 if (data.status === 'success') {
-                    consoleDiv.innerText += data.log + "\n\n✨ 部署推送流程执行完成！请在 GitHub Actions 查看运行情况！";
+                    consoleDiv.innerText += data.log + "\\n\\n✨ 部署推送流程执行完成！请在 GitHub Actions 查看运行情况！";
                     showToast("代码部署推送成功！");
                 } else {
                     consoleDiv.innerText += "❌ 失败了: " + data.message;
@@ -1048,10 +1128,8 @@ def index():
             }
         }
 
-        // Initial loads
         loadPosts();
         
-        // Setup Drag & Drop for Memo upload
         const dropzone = document.getElementById('dropzone');
         dropzone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -1074,11 +1152,19 @@ def index():
     </script>
 </body>
 </html>
-    """
-    return render_template_string(html_content)
+"""
+
+def run_server():
+    server_address = ('127.0.0.1', 5000)
+    httpd = HTTPServer(server_address, AdminHTTPHandler)
+    print("Xynrin Blog Admin is running at http://127.0.0.1:5000")
+    # Automatically open browser
+    webbrowser.open("http://127.0.0.1:5000")
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\nShutting down server...")
+        httpd.server_close()
 
 if __name__ == '__main__':
-    # Open browser automatically
-    webbrowser.open("http://127.0.0.1:5000")
-    # Run server
-    app.run(host='127.0.0.1', port=5000, debug=False)
+    run_server()
