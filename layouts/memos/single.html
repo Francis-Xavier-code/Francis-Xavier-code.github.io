@@ -125,6 +125,27 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentGallery = [];
     let currentIndex = 0;
     
+    // Zoom and pan state
+    let scale = 1;
+    let translateX = 0;
+    let translateY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    
+    function resetZoom() {
+        scale = 1;
+        translateX = 0;
+        translateY = 0;
+        updateTransform(true);
+        lightboxImg.style.cursor = 'zoom-in';
+    }
+    
+    function updateTransform(smooth = false) {
+        lightboxImg.style.transition = smooth ? 'transform 0.2s ease-out' : 'none';
+        lightboxImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    }
+    
     document.querySelectorAll('.memo-gallery a').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -142,9 +163,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function closeLightbox() {
         lightbox.style.display = 'none';
+        resetZoom();
     }
     
     function updateImage() {
+        resetZoom();
         lightboxImg.src = currentGallery[currentIndex];
         lightboxIndex.innerText = `${currentIndex + 1} / ${currentGallery.length}`;
         if (currentGallery.length <= 1) {
@@ -170,7 +193,136 @@ document.addEventListener('DOMContentLoaded', () => {
     nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
     closeBtn.addEventListener('click', closeLightbox);
     lightbox.addEventListener('click', closeLightbox);
-    lightboxImg.addEventListener('click', (e) => { e.stopPropagation(); });
+    
+    // Stop propagation on clicks to the image itself, unless dragging
+    lightboxImg.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+    
+    // Zoom with scroll wheel
+    lightbox.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const rect = lightboxImg.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left - rect.width / 2;
+        const mouseY = e.clientY - rect.top - rect.height / 2;
+        
+        const zoomFactor = 0.15;
+        const oldScale = scale;
+        
+        if (e.deltaY < 0) {
+            scale = Math.min(scale + zoomFactor * scale, 10);
+        } else {
+            scale = Math.max(scale - zoomFactor * scale, 1);
+        }
+        
+        if (scale === 1) {
+            translateX = 0;
+            translateY = 0;
+        } else {
+            // Adjust translation to zoom towards cursor
+            translateX -= mouseX * (scale / oldScale - 1);
+            translateY -= mouseY * (scale / oldScale - 1);
+        }
+        
+        updateTransform(true);
+        lightboxImg.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+    }, { passive: false });
+    
+    // Double click to zoom in/out
+    lightboxImg.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        if (scale > 1) {
+            resetZoom();
+        } else {
+            scale = 3;
+            const rect = lightboxImg.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left - rect.width / 2;
+            const mouseY = e.clientY - rect.top - rect.height / 2;
+            translateX = -mouseX * 2;
+            translateY = -mouseY * 2;
+            updateTransform(true);
+            lightboxImg.style.cursor = 'grab';
+        }
+    });
+    
+    // Mouse dragging (pan)
+    lightboxImg.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        if (scale <= 1) return;
+        isDragging = true;
+        startX = e.clientX - translateX;
+        startY = e.clientY - translateY;
+        lightboxImg.style.cursor = 'grabbing';
+    });
+    
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        translateX = e.clientX - startX;
+        translateY = e.clientY - startY;
+        updateTransform(false);
+    });
+    
+    window.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            lightboxImg.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+        }
+    });
+    
+    // Touch support (pan and pinch zoom)
+    let initialTouchDist = 0;
+    let initialTouchScale = 1;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    
+    lightboxImg.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+            if (scale > 1) {
+                isDragging = true;
+                touchStartX = e.touches[0].clientX - translateX;
+                touchStartY = e.touches[0].clientY - translateY;
+            }
+        } else if (e.touches.length === 2) {
+            isDragging = false;
+            initialTouchDist = getTouchDist(e);
+            initialTouchScale = scale;
+        }
+    });
+    
+    lightboxImg.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1 && isDragging) {
+            translateX = e.touches[0].clientX - touchStartX;
+            translateY = e.touches[0].clientY - touchStartY;
+            updateTransform(false);
+        } else if (e.touches.length === 2) {
+            const dist = getTouchDist(e);
+            if (dist > 0 && initialTouchDist > 0) {
+                const newScale = initialTouchScale * (dist / initialTouchDist);
+                scale = Math.max(1, Math.min(newScale, 10));
+                if (scale === 1) {
+                    translateX = 0;
+                    translateY = 0;
+                }
+                updateTransform(true);
+            }
+        }
+    });
+    
+    lightboxImg.addEventListener('touchend', (e) => {
+        isDragging = false;
+        if (e.touches.length === 1) {
+            isDragging = true;
+            touchStartX = e.touches[0].clientX - translateX;
+            touchStartY = e.touches[0].clientY - translateY;
+        }
+    });
+    
+    function getTouchDist(e) {
+        return Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
+    }
     
     document.addEventListener('keydown', (e) => {
         if (lightbox.style.display === 'flex') {
