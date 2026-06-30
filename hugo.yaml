@@ -46,6 +46,9 @@ params:
       url: mailto:xynrin@163.com
     - name: bilibili
       url: https://space.bilibili.com/1198508132
+    - name: rss
+      url: /index.xml
+
   mainSections:
     - post
   featuredImageField: image
@@ -189,10 +192,15 @@ menu:
       name: 文章
       url: /archives/
       weight: 10
+    - identifier: memos
+      name: 瞬间
+      url: /memos/
+      weight: 15
     - identifier: tags
       name: 标签
       url: /tags/
       weight: 20
+
     - identifier: about
       name: 关于
       url: /about/
