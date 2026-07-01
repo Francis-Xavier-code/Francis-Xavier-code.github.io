@@ -25,6 +25,9 @@ outputFormats:
     mediaType: application/json
     baseName: index
     isPlainText: true
+  RSS:
+    mediaType: application/rss+xml
+    baseName: feed
 
 pagination:
   pagerSize: 6
@@ -56,7 +59,7 @@ params:
     - name: bilibili
       url: https://space.bilibili.com/1198508132
     - name: rss
-      url: /index.xml
+      url: /feed.xml
 
   mainSections:
     - post
@@ -123,14 +126,14 @@ params:
       lang: zh-CN
       loading: lazy
 
-  # 瞬间（memos）使用 Waline 作为评论/点赞后端。
-  # 部署 Waline 到 Vercel 后，把后端域名填入 serverURL 即可启用。
+  # 瞬间（memos）使用 Twikoo 作为评论后端。访客无需登录即可匿名评论。
+  # 后端可用腾讯云开发 CloudBase（自带数据库，国内快、免备案）或 Vercel。
+  # 部署后把环境 ID / 访问地址填入 envId 即可启用。
   # 未填写时前端会自动隐藏评论区与计数，不影响页面其余部分。
-  waline:
-    serverURL: ""          # 例如 https://your-waline.vercel.app
+  twikoo:
+    envId: ""              # CloudBase 环境ID，或 Vercel/私有部署的访问URL
+    region: ap-shanghai    # CloudBase 环境地域，Vercel/URL 部署时留空即可
     lang: zh-CN
-    reaction: true         # 开启点赞（表情反应）
-    pageview: true         # 显示浏览量
 
   analytics:
     google:
