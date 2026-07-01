@@ -123,6 +123,15 @@ params:
       lang: zh-CN
       loading: lazy
 
+  # 瞬间（memos）使用 Waline 作为评论/点赞后端。
+  # 部署 Waline 到 Vercel 后，把后端域名填入 serverURL 即可启用。
+  # 未填写时前端会自动隐藏评论区与计数，不影响页面其余部分。
+  waline:
+    serverURL: ""          # 例如 https://your-waline.vercel.app
+    lang: zh-CN
+    reaction: true         # 开启点赞（表情反应）
+    pageview: true         # 显示浏览量
+
   analytics:
     google:
       SiteVerificationTag: "2dTPklx6cOydPSINuCHxypLaCezdhnuyPBVY7rd189s"
