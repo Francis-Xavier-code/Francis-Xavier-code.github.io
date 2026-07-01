@@ -776,7 +776,7 @@ kbd {
 
 /* ============ Sticky Sidebar TOC ============ */
 @media screen and (min-width: 1280px) {
-    .post-single {
+    .post-single:has(.toc) {
         max-width: 1160px !important;
         margin: 0 auto;
         display: grid;
@@ -784,16 +784,13 @@ kbd {
         column-gap: 50px;
         align-items: start;
     }
-    .post-header {
+    .post-single:has(.toc) .post-header,
+    .post-single:has(.toc) .post-content,
+    .post-single:has(.toc) .post-footer,
+    .post-single:has(.toc) .breadcrumbs {
         grid-column: 1;
     }
-    .post-content {
-        grid-column: 1;
-    }
-    .post-footer {
-        grid-column: 1;
-    }
-    .comments {
+    .post-single:has(.toc) .comments {
         grid-column: 1;
         max-width: 780px;
     }

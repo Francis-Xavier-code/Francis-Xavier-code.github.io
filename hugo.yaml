@@ -37,6 +37,8 @@ params:
   ShowWordCount: true
   ShowReadingTime: true
   ShowCodeCopyButtons: true
+  ShowToc: true
+  TocOpen: true
   profileMode:
     enabled: true
     title: Xynrin
