@@ -1,4 +1,5 @@
 import os
+import re
 import datetime
 import subprocess
 import time
@@ -31,8 +32,9 @@ def prompt_input(msg):
 print_header("✨ Xynrin's Blog - 新建文章 ✨")
 
 folder_name = prompt_input("1. 请输入文章缩写 (英文/拼音, 将作为文件夹名和网址): ")
+folder_name = re.sub(r"[^a-zA-Z0-9-]", "", folder_name.replace(" ", "-")).lower()
 if not folder_name:
-    print_error("名称不能为空！")
+    print_error("名称不合法，请使用字母、数字或横杠！")
     input("\n按回车键退出...")
     exit(1)
 

@@ -29,11 +29,12 @@ GitHub Pages 只能托管静态文件，没有任何后端能力。但博客需�
 | 层 | 技术 | 选择理由 |
 |----|------|----------|
 | 静态生成 | Hugo extended | 单文件二进制、build 速度极快、SCSS 内置 |
-| 主题 | hugo-theme-stack v4 | 设计干净、可定制度高、社区活跃 |
+| 主题 | PaperMod | 设计干净、可定制度高、社区活跃 |
 | 部署 | GitHub Pages + GitHub Actions | 免费、和代码托管同处、零配置 |
 | 写作后台 | Pages CMS | 零自建、GitHub App 授权、可视化字段 |
-| 评论后端 | Giscus | 零自建、用 GitHub Discussions 当数据库 |
-| 评论数据 | 仓库 Discussions | 不依赖外部服务、永久免费、自带反垃圾 |
+| 文章评论 | Giscus | 零自建、用 GitHub Discussions 当数据库 |
+| 瞬间评论 | Twikoo | 可选启用，支持匿名评论，未配置 envId 时自动隐藏 |
+| 文章评论数据 | 仓库 Discussions | 不依赖外部服务、永久免费、自带反垃圾 |
 | 全站统计 | 不蒜子 | 一行 JS 即可、零配置 |
 | README 徽章 | shields.io / visitor-badge | 公开免费、实时数据 |
 
@@ -75,7 +76,7 @@ xynrin.github.io 更新（缓存约 1 分钟）
        渲染评论列表 + reactions
 ```
 
-### 3. 访客提交评论
+### 3. 访客提交文章评论
 
 ```
 访客点击 Giscus 评论框 → 用 GitHub 登录授权
@@ -128,23 +129,20 @@ JS 写到 #busuanzi_value_site_pv 和 #busuanzi_value_site_uv
 │   ├── home.html                    # 首页（含 Hero 区）
 │   ├── single.html                  # 文章页（含返回 + 打赏 + 评论）
 │   ├── index.json                   # 搜索 JSON 索引
-│   ├── _partials/
-│   │   ├── head/custom.html         # 不蒜子 / Waline / KaTeX 注入
-│   │   ├── footer/
-│   │   │   ├── footer.html          # 自定义页脚（运行时间 / PV / UV）
-│   │   │   └── custom.html          # 进度条 / 回到顶部 / TOC / Mermaid / 快捷键
-│   │   ├── sidebar/left.html        # 左栏（底部 banner + 灯箱）
-│   │   ├── widget/rss-qr.html       # RSS 二维码 widget
-│   │   ├── article/components/
-│   │   │   ├── details.html         # 字数 / 阅读时长 / 浏览量
-│   │   │   └── reward.html          # 打赏按钮
-│   │   └── comments/provider/
-│   │       └── waline.html          # Waline 接入
-│   └── page/search.html             # fzf 风格搜索页
-├── static/                          # 原样复制（不经 Hugo 处理）
+│   ├── partials/
+│   │   ├── comments.html            # 文章 Giscus 评论
+│   │   ├── memo-comments.html       # 瞬间 Twikoo 评论（可选）
+│   │   ├── memo-lightbox.html       # 瞬间图片灯箱
+│   │   ├── extend_head.html         # AdSense 等 head 扩展
+│   │   ├── extend_post_content.html # 打赏 / 许可 / 广告位
+│   │   └── footer.html              # 自定义页脚（运行时间 / PV / UV）
+│   ├── memos/
+│   │   ├── list.html                # 瞬间列表页
+│   │   └── single.html              # 瞬间详情页
+│   └── shortcodes/friends.html      # 友链短代码├── static/                          # 原样复制（不经 Hugo 处理）
 │   ├── admin/                       # （Decap CMS 入口预留）
 │   └── img/                         # 公共静态图
-├── themes/hugo-theme-stack/         # 主题（Git submodule，别直接改）
+├── themes/PaperMod/         # 主题（Git submodule，别直接改）
 ├── docs/                            # 这个目录！
 │   ├── DEPLOY.md
 │   ├── MAINTAIN.md
@@ -162,7 +160,7 @@ JS 写到 #busuanzi_value_site_pv 和 #busuanzi_value_site_uv
 ## 🧠 关键设计决策
 
 ### 为什么主题用 submodule 不直接复制？
-- 升级方便：`cd themes/hugo-theme-stack && git pull` 即可
+- 升级方便：`cd themes/PaperMod && git pull` 即可
 - 自己的修改全放 `layouts/` 和 `assets/scss/custom.scss`，不污染主题源码
 
 ### 为什么 search 用自研 fzf 不用 Algolia？
@@ -175,13 +173,12 @@ JS 写到 #busuanzi_value_site_pv 和 #busuanzi_value_site_uv
 - **它没有公开 HTTP API** 让外部按用户名查询数字
 - 想在 README 显示真实 PV，必须换用 Umami / Vercel Analytics 这类有 API 的服务
 
-### 为什么评论选 Giscus 不选 Waline？
-- Waline 需要部署后端（Vercel）+ 数据库（GitHub repo / LeanCloud / MongoDB）+ 配 7+ 个环境变量
-- 任意一个环节出问题（Sensitive 标签、跨域、JWT、域名白名单）都会让评论挂掉
+### 为什么文章评论选 Giscus，瞬间评论预留 Twikoo？
 - Giscus 不需要后端，所有数据存在仓库的 Discussions 里，配 4 个 ID 就能用
-- 缺点：访客必须有 GitHub 账号、不能统计单篇浏览量
-- 评论隐私？Discussion 是公开的，但你可以删任何 comment
-
+- 文章评论用 Giscus，适合长文讨论；瞬间评论预留 Twikoo，适合匿名轻互动
+- Twikoo 未配置 `params.twikoo.envId` 时不渲染评论区，不影响瞬间页面
+- 代价：Giscus 访客必须有 GitHub 账号；Twikoo 需要你自行配置 CloudBase / Vercel / 私有服务
+- 评论隐私？Giscus Discussion 是公开的，但你可以删任何 comment
 ---
 
 ## 🔐 安全模型
@@ -203,7 +200,7 @@ JS 写到 #busuanzi_value_site_pv 和 #busuanzi_value_site_uv
 | 想深入… | 看这个 |
 |---------|--------|
 | Hugo 模板语法 | https://gohugo.io/templates/ |
-| 主题文档 | https://stack.jimmycai.com/ |
+| 主题文档 | https://github.com/adityatelange/hugo-PaperMod/wiki/ |
 | GitHub Actions | https://docs.github.com/actions |
 | Giscus 文档 | https://github.com/giscus/giscus |
 | Pages CMS 文档 | https://pagescms.org/docs |

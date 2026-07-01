@@ -9,6 +9,27 @@ from config import POSTS_DIR
 from markdown_utils import parse_md, write_md
 
 
+def _to_list(value):
+    """把前端传来的标签/分类规整为去重后的字符串列表。
+
+    支持数组，或用逗号 / 中文逗号 / 空格分隔的字符串。
+    """
+    if value is None:
+        return []
+    if isinstance(value, str):
+        parts = re.split(r"[,，\s]+", value)
+    elif isinstance(value, list):
+        parts = [str(v) for v in value]
+    else:
+        return []
+    result = []
+    for p in parts:
+        p = p.strip()
+        if p and p not in result:
+            result.append(p)
+    return result
+
+
 def get_all_posts_list():
     """返回按日期倒序排列的文章列表。"""
     posts_list = []
@@ -38,6 +59,8 @@ def create_post(data):
     title = (data.get("title") or "").strip()
     slug = (data.get("slug") or "").strip()
     description = (data.get("description") or "").strip()
+    categories = _to_list(data.get("categories"))
+    tags = _to_list(data.get("tags"))
 
     if not title or not slug:
         return {"status": "error", "message": "标题和 Slug 不能为空"}, 400
@@ -56,6 +79,8 @@ def create_post(data):
         "date": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S+08:00"),
         "draft": True,
         "description": description,
+        "categories": categories,
+        "tags": tags,
     }
     body = "<!-- 在这里开始编写您的文章内容 -->\n"
     write_md(file_path, fm, body)

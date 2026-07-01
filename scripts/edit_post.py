@@ -17,6 +17,9 @@ def print_header(title):
 def print_step(msg):
     print(f"{C_BLUE}•{C_RESET} {msg}")
 
+def print_success(msg):
+    print(f"{C_GREEN}✔{C_RESET} {msg}")
+
 def print_error(msg):
     print(f"{C_RED}✖{C_RESET} {msg}")
 

@@ -1,0 +1,20 @@
+{{/* 瞬间专用 Twikoo 评论区。envId 未配置时不渲染。访客无需登录即可匿名评论。 */}}
+{{- $twikoo := site.Params.twikoo -}}
+{{- with $twikoo.envId -}}
+<div class="memo-comments" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+    <div id="twikoo-container"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.42/dist/twikoo.all.min.js"></script>
+<script>
+    twikoo.init({
+        envId: '{{ . }}',
+        {{- with $twikoo.region }}
+        region: '{{ . }}',
+        {{- end }}
+        el: '#twikoo-container',
+        lang: '{{ $twikoo.lang | default "zh-CN" }}',
+        path: window.location.pathname,
+    });
+</script>
+{{- end -}}

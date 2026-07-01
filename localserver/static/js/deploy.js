@@ -14,7 +14,7 @@ async function runDeploy() {
             consoleDiv.innerText += data.log + '\n\n✨ 部署推送流程执行完成！请在 GitHub Actions 查看运行情况！';
             showToast('代码部署推送成功！');
         } else {
-            consoleDiv.innerText += '❌ 失败了: ' + data.message;
+            consoleDiv.innerText += (data.log ? data.log + '\n\n' : '') + '❌ 失败了: ' + data.message;
             showToast('部署失败！', true);
         }
     } catch (e) {

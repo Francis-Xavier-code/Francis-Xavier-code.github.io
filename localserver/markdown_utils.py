@@ -3,6 +3,7 @@
 只支持本项目实际用到的 YAML 子集：字符串、布尔、行内列表 [a, b]、
 以及块状列表（key: 换行后跟若干 "  - item"）。
 """
+import json
 import os
 
 
@@ -59,6 +60,11 @@ def parse_md(filepath):
     return fm, body
 
 
+def _yaml_scalar(value):
+    """用 JSON 字符串语法生成合法 YAML 双引号标量。"""
+    return json.dumps(str(value), ensure_ascii=False)
+
+
 def write_md(filepath, fm, body):
     """将 front matter 与正文写回 markdown 文件（统一 LF 换行）。"""
     fm_lines = ["---"]
@@ -71,9 +77,9 @@ def write_md(filepath, fm, body):
             else:
                 fm_lines.append(f"{k}:")
                 for item in v:
-                    fm_lines.append(f"  - {item}")
+                    fm_lines.append(f"  - {_yaml_scalar(item)}")
         else:
-            fm_lines.append(f'{k}: "{v}"')
+            fm_lines.append(f"{k}: {_yaml_scalar(v)}")
     fm_lines.append("---")
     fm_lines.append("")
     fm_lines.append(body)

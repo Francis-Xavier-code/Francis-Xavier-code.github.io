@@ -9,7 +9,7 @@
 - [ ] 翻一下 [仓库 Discussions](https://github.com/Xynrin/Xynrin.github.io/discussions) 看有没有新评论 / 不当内容
 
 ### 每月（15 分钟）
-- [ ] `cd themes/hugo-theme-stack && git pull && cd ../..` 升级主题，本地 `hugo server` 看有没有破坏样式
+- [ ] `cd themes/PaperMod && git pull && cd ../..` 升级主题，本地 `hugo server` 看有没有破坏样式
 - [ ] 跑 `hugo --gc` 清理失效缓存
 - [ ] 查看 [Hugo 新版本](https://github.com/gohugoio/hugo/releases)，如有大版本更新，调整 `.github/workflows/hugo.yml` 里的 `HUGO_VERSION`
 
@@ -62,7 +62,9 @@ hugo server --buildDrafts   # 本地预览 http://localhost:1313
 git add .
 git commit -m "post: 我的新文章"
 git push
-```### Front Matter 字段
+```
+
+### Front Matter 字段
 
 ```yaml
 ---
@@ -174,5 +176,5 @@ git clone --mirror https://github.com/Xynrin/Xynrin.github.io.git
 | 看部署状态 | https://github.com/Xynrin/Xynrin.github.io/actions |
 | 看评论 | https://github.com/Xynrin/Xynrin.github.io/discussions |
 | 改评论配置 | https://giscus.app |
-| 看主题最新版 | https://github.com/CaiJimmy/hugo-theme-stack/releases |
+| 看主题最新版 | https://github.com/adityatelange/hugo-PaperMod/releases |
 | 看 Hugo 最新版 | https://github.com/gohugoio/hugo/releases |

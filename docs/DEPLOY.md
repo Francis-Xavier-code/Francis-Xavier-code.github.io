@@ -29,7 +29,7 @@ git --version
 ## 🌐 一、GitHub 仓库
 
 1. **博客主仓库**：`Xynrin/Xynrin.github.io`（Public，必须公开 Pages 才免费）
-2. **评论数据仓库**：`Xynrin/waline-data`（Private，存评论数据）
+2. **文章评论数据**：`Xynrin/Xynrin.github.io` 仓库 Discussions（Giscus 使用）
 
 启用 Pages：
 
@@ -95,7 +95,7 @@ params:
 ```
 
 > 评论数据存在仓库的 Discussions 里，每篇文章自动对应一个 Discussion。
-> 想换评论源（Waline / Twikoo / Cusdis 等），改 `provider` 一行即可，主题已支持。
+> 瞬间页可选使用 Twikoo：在 `hugo.yaml` 的 `params.twikoo.envId` 填入 CloudBase 环境 ID 或服务 URL 后启用。
 
 ---
 
@@ -151,7 +151,7 @@ git push
 | 改 favicon | 替换 `assets/img/favicon.png` |
 | 改赞赏码 | 替换 `assets/img/zan-shang.png` |
 | 改 Hero 大标语 | `hugo.yaml` 的 `params.hero` |
-| 升级主题 | `cd themes/hugo-theme-stack && git pull` |
+| 升级主题 | `cd themes/PaperMod && git pull` |
 
 ---
 

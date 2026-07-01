@@ -11,3 +11,10 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+# Python 缓存
+__pycache__/
+*.py[cod]
+
+# 本地工具
+.tools/
+.hugo_cache/

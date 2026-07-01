@@ -37,7 +37,21 @@ class AdminHTTPHandler(BaseHTTPRequestHandler):
 
     def _set_common_headers(self):
         self.send_header("Connection", "close")
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Origin", f"http://{config.HOST}:{config.PORT}")
+
+    def is_same_origin_request(self):
+        allowed = {
+            f"http://{config.HOST}:{config.PORT}",
+            f"http://localhost:{config.PORT}",
+        }
+        origin = self.headers.get("Origin")
+        if origin:
+            return origin in allowed
+        referer = self.headers.get("Referer")
+        if referer:
+            parsed = urlparse(referer)
+            return f"{parsed.scheme}://{parsed.netloc}" in allowed
+        return True
 
     def send_json(self, data, status=200):
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
@@ -115,6 +129,9 @@ class AdminHTTPHandler(BaseHTTPRequestHandler):
             self.serve_static(path)
 
     def do_POST(self):
+        if not self.is_same_origin_request():
+            self.send_json({"status": "error", "message": "拒绝跨站请求"}, 403)
+            return
         path = unquote(urlparse(self.path).path)
 
         if path == "/api/posts":
@@ -134,6 +151,9 @@ class AdminHTTPHandler(BaseHTTPRequestHandler):
             self.send_status(404)
 
     def do_DELETE(self):
+        if not self.is_same_origin_request():
+            self.send_json({"status": "error", "message": "拒绝跨站请求"}, 403)
+            return
         path = unquote(urlparse(self.path).path)
 
         if path.startswith("/api/posts/"):

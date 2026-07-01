@@ -77,12 +77,14 @@ async function submitNewPost(e) {
     const title = document.getElementById('post-title-input').value;
     const slug = document.getElementById('post-slug-input').value;
     const description = document.getElementById('post-desc-input').value;
+    const categories = document.getElementById('post-categories-input').value;
+    const tags = document.getElementById('post-tags-input').value;
 
     try {
         const data = await apiRequest('/api/posts', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, slug, description }),
+            body: JSON.stringify({ title, slug, description, categories, tags }),
         });
         if (data.status === 'success') {
             showToast('文章创建成功！即将自动唤起编辑器...');
