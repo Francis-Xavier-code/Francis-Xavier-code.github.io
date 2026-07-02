@@ -214,6 +214,10 @@ menu:
       name: 图库
       url: /gallery/
       weight: 18
+    - identifier: photos
+      name: 图片
+      url: /photos/
+      weight: 19
     - identifier: tags
       name: 标签
       url: /tags/

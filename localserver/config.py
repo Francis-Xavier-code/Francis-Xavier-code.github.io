@@ -7,6 +7,8 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 POSTS_DIR = os.path.join(ROOT_DIR, "content", "post")
 MEMOS_DIR = os.path.join(ROOT_DIR, "content", "memos")
 STATIC_MEMOS_IMG_DIR = os.path.join(ROOT_DIR, "static", "img", "memos")
+STATIC_PHOTOS_IMG_DIR = os.path.join(ROOT_DIR, "static", "img", "photos")
+PHOTOS_DATA_FILE = os.path.join(ROOT_DIR, "data", "photos.json")
 
 # 前端静态资源目录（本管理后台自身的页面）
 WEB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
@@ -21,5 +23,10 @@ ALLOWED_IMG_EXT = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 def ensure_dirs():
     """确保运行所需目录都存在。"""
     os.makedirs(STATIC_MEMOS_IMG_DIR, exist_ok=True)
+    os.makedirs(STATIC_PHOTOS_IMG_DIR, exist_ok=True)
+    os.makedirs(os.path.dirname(PHOTOS_DATA_FILE), exist_ok=True)
     os.makedirs(MEMOS_DIR, exist_ok=True)
     os.makedirs(POSTS_DIR, exist_ok=True)
+    if not os.path.exists(PHOTOS_DATA_FILE):
+        with open(PHOTOS_DATA_FILE, "w", encoding="utf-8", newline="\n") as f:
+            f.write("[]\n")

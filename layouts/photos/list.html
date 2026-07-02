@@ -1,0 +1,47 @@
+{{- define "main" }}
+
+{{- $photos := site.Data.photos | default (slice) -}}
+{{- $visible := where $photos "visibility" "!=" "private" -}}
+
+<section class="photos-page-header">
+  <div>
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}
+    <p>{{ . }}</p>
+    {{- end }}
+  </div>
+  <span>{{ len $visible }} 张原图</span>
+</section>
+
+{{- if gt (len $visible) 0 }}
+<div class="photos-wall memo-gallery">
+  {{- range $visible -}}
+  <article class="photo-wall-card">
+    <a href="{{ .src | absURL }}" target="_blank" rel="noopener noreferrer" class="photo-wall-image" aria-label="{{ .title }}">
+      <img src="{{ .src | absURL }}" loading="lazy" alt="{{ .title }}">
+    </a>
+    <div class="photo-wall-info">
+      <h2>{{ .title }}</h2>
+      <p>
+        <time datetime="{{ .date }}">{{ time.Format "2006年01月02日" .date }}</time>
+        {{- with .location }}<span>{{ . }}</span>{{ end -}}
+      </p>
+      {{- with .description }}
+      <div class="photo-wall-desc">{{ . }}</div>
+      {{- end }}
+      {{- with .tags }}
+      <div class="photo-wall-tags">
+        {{- range . }}<span>#{{ . }}</span>{{ end -}}
+      </div>
+      {{- end }}
+    </div>
+  </article>
+  {{- end -}}
+</div>
+{{- else }}
+<div class="photos-empty">还没有公开图片。</div>
+{{- end }}
+
+{{- partial "memo-lightbox.html" . }}
+
+{{- end }}

@@ -4,6 +4,7 @@
     <span id="lightbox-prev" style="position: absolute; left: 20px; color: white; font-size: 40px; cursor: pointer; background: rgba(255,255,255,0.1); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-family: monospace;">&lt;</span>
     <img id="lightbox-img" src="" alt="preview" style="max-width: 90%; max-height: 90%; object-fit: contain; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border-radius: 4px; transition: transform 0.2s ease;">
     <span id="lightbox-next" style="position: absolute; right: 20px; color: white; font-size: 40px; cursor: pointer; background: rgba(255,255,255,0.1); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-family: monospace;">&gt;</span>
+    <a id="lightbox-original" href="" target="_blank" rel="noopener noreferrer" style="position: absolute; bottom: 20px; right: 20px; color: white; font-size: 14px; background: rgba(255,255,255,0.12); padding: 6px 12px; border-radius: 20px; text-decoration: none;">打开原图</a>
     <div id="lightbox-index" style="position: absolute; bottom: 20px; color: white; font-size: 14px; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 20px;">1 / 1</div>
 </div>
 
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevBtn = document.getElementById('lightbox-prev');
     const nextBtn = document.getElementById('lightbox-next');
     const closeBtn = document.getElementById('lightbox-close');
+    const originalBtn = document.getElementById('lightbox-original');
 
     let currentGallery = [];
     let currentIndex = 0;
@@ -50,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateImage() {
         resetZoom();
         lightboxImg.src = currentGallery[currentIndex];
+        originalBtn.href = currentGallery[currentIndex];
         lightboxIndex.innerText = `${currentIndex + 1} / ${currentGallery.length}`;
         const multi = currentGallery.length > 1;
         prevBtn.style.display = multi ? 'flex' : 'none';
@@ -61,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     prevBtn.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
     nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
+    originalBtn.addEventListener('click', (e) => e.stopPropagation());
     closeBtn.addEventListener('click', closeLightbox);
     lightbox.addEventListener('click', closeLightbox);
     lightboxImg.addEventListener('click', (e) => e.stopPropagation());
