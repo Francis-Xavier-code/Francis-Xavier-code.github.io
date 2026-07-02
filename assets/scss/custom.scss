@@ -16,6 +16,280 @@
     --gradient-soft: linear-gradient(135deg, rgba(0, 217, 255, 0.08) 0%, rgba(255, 45, 146, 0.08) 100%);
 }
 
+/* ============ 瞬间：TimePlus 风格时光流 ============ */
+.timeplus-memos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.timeplus-memos-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.timeplus-memos-header p {
+    margin: 0.35rem 0 0;
+    color: var(--secondary);
+    font-size: 0.95rem;
+}
+
+.timeplus-memos-header > span {
+    flex-shrink: 0;
+    color: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.28rem 0.7rem;
+    font-size: 0.82rem;
+}
+
+.timeplus-memos-list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.timeplus-memos-list::before {
+    content: "";
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 4.4rem;
+    width: 1px;
+    background: var(--border);
+}
+
+.timeplus-memos-list.single::before {
+    display: none;
+}
+
+.timeplus-memo-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 5.6rem minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.timeplus-memo-rail {
+    position: relative;
+    z-index: 1;
+    padding-top: 0.55rem;
+}
+
+.timeplus-memo-rail time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    width: 4rem;
+    margin: 0 auto;
+    padding: 0.55rem 0.35rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--entry);
+}
+
+.timeplus-memo-rail span {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.timeplus-memo-rail small {
+    color: var(--secondary);
+    font-size: 0.75rem;
+}
+
+.timeplus-memo-panel {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--entry);
+    padding: 1rem;
+}
+
+.timeplus-memo-author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+
+.timeplus-memo-author img {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: var(--code-bg);
+}
+
+.timeplus-memo-author strong {
+    display: block;
+    color: var(--primary);
+    font-size: 0.98rem;
+}
+
+.timeplus-memo-author p {
+    margin: 0.1rem 0 0;
+    color: var(--secondary);
+    font-size: 0.78rem;
+}
+
+.timeplus-memo-content {
+    color: var(--content);
+    line-height: 1.75;
+    font-size: 0.96rem;
+    word-break: break-word;
+}
+
+.timeplus-memo-content p {
+    margin: 0 0 0.65rem;
+}
+
+.timeplus-memo-content p:last-child {
+    margin-bottom: 0;
+}
+
+.timeplus-memo-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.38rem;
+    max-width: 520px;
+    margin-top: 0.9rem;
+}
+
+.timeplus-memo-gallery.grid-1 {
+    grid-template-columns: minmax(0, 340px);
+}
+
+.timeplus-memo-gallery.grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 360px;
+}
+
+.timeplus-gallery-item {
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--code-bg);
+    aspect-ratio: 1 / 1;
+}
+
+.timeplus-memo-gallery.grid-1 .timeplus-gallery-item {
+    aspect-ratio: auto;
+}
+
+.timeplus-gallery-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.22s ease;
+}
+
+.timeplus-memo-gallery.grid-1 img {
+    max-height: 420px;
+    height: auto;
+    object-fit: contain;
+}
+
+.timeplus-gallery-item:hover img {
+    transform: scale(1.035);
+}
+
+.timeplus-memo-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.9rem;
+    color: var(--secondary);
+    font-size: 0.82rem;
+}
+
+.timeplus-memo-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.timeplus-memo-tags span {
+    color: var(--accent-color);
+}
+
+.timeplus-comment-link,
+.timeplus-back a {
+    color: var(--secondary);
+    text-decoration: none;
+}
+
+.timeplus-comment-link:hover,
+.timeplus-back a:hover {
+    color: var(--accent-color);
+}
+
+.timeplus-back {
+    margin-bottom: 1rem;
+}
+
+.timeplus-pagination .pagination {
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 700px) {
+    .timeplus-memos-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .timeplus-memos-list::before {
+        left: 0.55rem;
+    }
+
+    .timeplus-memo-card {
+        grid-template-columns: 1fr;
+        gap: 0.55rem;
+        padding-left: 1.5rem;
+    }
+
+    .timeplus-memo-rail {
+        padding-top: 0;
+    }
+
+    .timeplus-memo-rail time {
+        width: auto;
+        margin: 0;
+        display: inline-flex;
+        flex-direction: row;
+        padding: 0.32rem 0.55rem;
+    }
+
+    .timeplus-memo-rail time::before {
+        content: "";
+        position: absolute;
+        left: 0.16rem;
+        top: 0.7rem;
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        background: var(--accent-color);
+        box-shadow: 0 0 0 4px var(--theme);
+    }
+
+    .timeplus-memo-panel {
+        padding: 0.9rem;
+    }
+
+    .timeplus-memo-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
 [data-scheme="dark"] {
     --accent-color: #00e5ff;
     --accent-color-darker: #00b8d4;

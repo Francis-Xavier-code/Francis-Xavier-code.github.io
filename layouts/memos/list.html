@@ -1,146 +1,41 @@
 {{- define "main" }}
 
-<div class="memos-header" style="margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
-  <h1 style="margin: 0; font-size: 28px;">{{ .Title }}</h1>
-  {{- if .Description }}
-  <p style="margin: 5px 0 0 0; color: var(--secondary); font-size: 14px;">{{ .Description }}</p>
-  {{- end }}
-</div>
-
-<div class="memos-timeline">
-  {{- $pages := .Pages }}
-  {{- $paginator := .Paginate $pages }}
-  {{- range $paginator.Pages }}
-  <div class="memo-item" style="display: flex; padding: 1.5rem 0; border-bottom: 1px solid var(--border); gap: 12px;">
-    <!-- Avatar -->
-    <div class="memo-avatar" style="flex-shrink: 0; width: 42px; height: 42px; border-radius: 4px; overflow: hidden; background: var(--border);">
-      <img src="{{ site.Params.profileMode.imageUrl | default "/img/avatar.png" | absURL }}" alt="avatar" style="width: 100%; height: 100%; object-fit: cover;">
-    </div>
-    
-    <!-- Content Area -->
-    <div class="memo-body" style="flex-grow: 1; min-width: 0;">
-      <!-- Author name -->
-      <div class="memo-author" style="font-weight: bold; color: var(--primary); font-size: 15px; margin-bottom: 4px;">
-        {{ site.Params.profileMode.title | default "Xynrin" }}
-      </div>
-      
-      <!-- Text Content -->
-      <div class="memo-content md-content" style="font-size: 15px; line-height: 1.6; color: var(--content); margin-bottom: 10px; word-break: break-all;">
-        {{ .Content }}
-      </div>
-      
-      <!-- Image Grid -->
-      {{- with .Params.images -}}
-      {{- $count := len . -}}
-      {{- $gridClass := "grid-3" -}}
-      {{- if eq $count 1 -}}
-        {{- $gridClass = "grid-1" -}}
-      {{- else if or (eq $count 2) (eq $count 4) -}}
-        {{- $gridClass = "grid-2" -}}
-      {{- end -}}
-      <div class="memo-gallery {{ $gridClass }}" style="margin-bottom: 10px;">
-        {{- range . -}}
-        <div class="gallery-item">
-          <a href="{{ . | absURL }}" target="_blank" rel="noopener noreferrer">
-            <img src="{{ . | absURL }}" loading="lazy" alt="memo photo">
-          </a>
-        </div>
-        {{- end -}}
-      </div>
-      {{- end -}}
-      
-      <!-- Date & Footer with comment count -->
-      <div class="memo-footer" style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--secondary); margin-top: 8px;">
-        <time class="memo-date">{{ .Date.Format "2006-01-02 15:04" }}</time>
-        <a href="{{ .Permalink }}#twikoo-container" class="memo-comment-btn" style="color: var(--secondary); text-decoration: none; display: flex; align-items: center; gap: 10px; padding: 2px 8px; border-radius: 4px; background: var(--code-bg); transition: all 0.2s ease;">
-          <span style="display: flex; align-items: center; gap: 4px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <span class="twikoo-comment-count" data-path="{{ .RelPermalink }}">0</span>
-          </span>
-        </a>
-      </div>
-    </div>
+<section class="timeplus-memos-header">
+  <div>
+    <h1>{{ .Title }}</h1>
+    {{- with .Description }}
+    <p>{{ . }}</p>
+    {{- end }}
   </div>
+  <span>{{ len (where .Pages "Params.visibility" "!=" "private") }} 条记录</span>
+</section>
+
+<div class="timeplus-memos-list">
+  {{- $pages := where .Pages "Params.visibility" "!=" "private" -}}
+  {{- $paginator := .Paginate $pages -}}
+  {{- range $paginator.Pages }}
+    {{- partial "memo-card.html" (dict "page" . "showComments" true) -}}
   {{- end }}
 </div>
 
-
-<!-- Pagination -->
 {{- if gt $paginator.TotalPages 1 }}
-<footer class="page-footer" style="margin-top: 2rem;">
+<footer class="page-footer timeplus-pagination">
   <nav class="pagination">
     {{- if $paginator.HasPrev }}
-    <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">«&nbsp;较新发布</a>
+    <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">较新发布</a>
     {{- end }}
     {{- if $paginator.HasNext }}
-    <a class="next" href="{{ $paginator.Next.URL | absURL }}">较旧发布&nbsp;»</a>
+    <a class="next" href="{{ $paginator.Next.URL | absURL }}">较旧发布</a>
     {{- end }}
   </nav>
 </footer>
 {{- end }}
-
-<style>
-.memo-gallery {
-    display: grid;
-    gap: 6px;
-    margin-top: 8px;
-    max-width: 500px;
-}
-.memo-gallery.grid-1 {
-    grid-template-columns: 1fr;
-    max-width: 340px;
-}
-.memo-gallery.grid-1 .gallery-item {
-    aspect-ratio: auto;
-}
-.memo-gallery.grid-1 img {
-    max-height: 300px;
-    width: auto;
-    object-fit: contain;
-    border-radius: 4px;
-}
-.memo-gallery.grid-2 {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 340px;
-}
-.memo-gallery.grid-3 {
-    grid-template-columns: repeat(3, 1fr);
-}
-.gallery-item {
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
-    background: var(--code-bg);
-    border-radius: 4px;
-}
-.gallery-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.2s ease;
-}
-.gallery-item img:hover {
-    transform: scale(1.03);
-}
-.memo-content p {
-    margin: 0 0 8px 0;
-}
-.memo-content p:last-child {
-    margin-bottom: 0;
-}
-.memo-comment-btn:hover {
-    background: var(--border) !important;
-    color: var(--primary) !important;
-}
-</style>
 
 {{- partial "memo-lightbox.html" . }}
 
 {{- with site.Params.twikoo.envId }}
 <script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.42/dist/twikoo.all.min.js"></script>
 <script>
-    // 时间线上批量拉取每条瞬间的评论数
     (function () {
         var els = Array.from(document.querySelectorAll('.twikoo-comment-count'));
         if (!els.length || typeof twikoo === 'undefined') return;

@@ -150,6 +150,20 @@ class AdminHTTPHandler(BaseHTTPRequestHandler):
         else:
             self.send_status(404)
 
+    def do_PUT(self):
+        if not self.is_same_origin_request():
+            self.send_json({"status": "error", "message": "拒绝跨站请求"}, 403)
+            return
+        path = unquote(urlparse(self.path).path)
+
+        if path.startswith("/api/memos/"):
+            filename = path.rsplit("/", 1)[-1]
+            content_type = self.headers.get("Content-Type")
+            length = int(self.headers.get("Content-Length", 0))
+            self.send_json(*memos.update_memo(filename, content_type, length, self.rfile))
+        else:
+            self.send_status(404)
+
     def do_DELETE(self):
         if not self.is_same_origin_request():
             self.send_json({"status": "error", "message": "拒绝跨站请求"}, 403)
