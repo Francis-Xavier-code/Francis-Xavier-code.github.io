@@ -290,6 +290,138 @@
     }
 }
 
+/* ============ 图库 ============ */
+.gallery-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.gallery-page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.gallery-page-header p {
+    margin: 0.35rem 0 0;
+    color: var(--secondary);
+    font-size: 0.95rem;
+}
+
+.gallery-page-header > span {
+    flex-shrink: 0;
+    color: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.28rem 0.7rem;
+    font-size: 0.82rem;
+}
+
+.gallery-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+}
+
+.gallery-group {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--entry);
+    padding: 1rem;
+}
+
+.gallery-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.85rem;
+}
+
+.gallery-group-header time {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.gallery-group-header span {
+    margin-left: 0.55rem;
+    color: var(--secondary);
+    font-size: 0.82rem;
+}
+
+.gallery-group-header a {
+    flex-shrink: 0;
+    color: var(--secondary);
+    text-decoration: none;
+    font-size: 0.82rem;
+}
+
+.gallery-group-header a:hover {
+    color: var(--accent-color);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.5rem;
+}
+
+.gallery-photo {
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--code-bg);
+    aspect-ratio: 1 / 1;
+}
+
+.gallery-photo:nth-child(5n + 1) {
+    grid-row: span 2;
+    aspect-ratio: 1 / 2.03;
+}
+
+.gallery-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.24s ease, filter 0.24s ease;
+}
+
+.gallery-photo:hover img {
+    transform: scale(1.04);
+    filter: brightness(1.06);
+}
+
+.gallery-empty {
+    color: var(--secondary);
+    text-align: center;
+    padding: 3rem 1rem;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+}
+
+@media (max-width: 700px) {
+    .gallery-page-header,
+    .gallery-group-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .gallery-photo:nth-child(5n + 1) {
+        grid-row: auto;
+        aspect-ratio: 1 / 1;
+    }
+}
+
 [data-scheme="dark"] {
     --accent-color: #00e5ff;
     --accent-color-darker: #00b8d4;

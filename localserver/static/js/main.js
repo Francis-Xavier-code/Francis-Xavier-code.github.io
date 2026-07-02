@@ -3,6 +3,7 @@
 const PAGE_TITLES = {
     'posts-page': '文章管理',
     'memos-page': '瞬间记录',
+    'gallery-page': '图库预览',
     'deploy-page': '网站发布',
 };
 
@@ -16,6 +17,7 @@ function switchPage(pageId, menuItem) {
 
     if (pageId === 'posts-page') loadPosts();
     if (pageId === 'memos-page') loadMemos();
+    if (pageId === 'gallery-page') loadGallery();
 }
 
 function initNavigation() {

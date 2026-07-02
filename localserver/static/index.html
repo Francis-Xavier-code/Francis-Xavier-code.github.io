@@ -17,6 +17,7 @@
         <ul class="menu-list">
             <li class="menu-item active" data-page="posts-page"><span class="menu-icon">📝</span> 文章管理</li>
             <li class="menu-item" data-page="memos-page"><span class="menu-icon">🫧</span> 瞬间记录</li>
+            <li class="menu-item" data-page="gallery-page"><span class="menu-icon">🖼️</span> 图库预览</li>
             <li class="menu-item" data-page="deploy-page"><span class="menu-icon">🚀</span> 网站发布</li>
         </ul>
         <div class="sidebar-footer">
@@ -109,6 +110,18 @@
                 </div>
             </div>
 
+            <!-- PAGE: Gallery -->
+            <div id="gallery-page" class="page">
+                <div class="panel-header">
+                    <h3>图库预览</h3>
+                    <span id="gallery-count" class="subtle-pill">0 张</span>
+                </div>
+                <div class="card gallery-admin-intro">
+                    <p>图库会自动汇总“瞬间记录”里的图片。需要增删照片时，编辑对应的来源瞬间即可。</p>
+                </div>
+                <div id="gallery-list" class="gallery-admin-grid"></div>
+            </div>
+
             <!-- PAGE: Deploy -->
             <div id="deploy-page" class="page">
                 <div class="panel-header">
@@ -164,6 +177,7 @@
     <script src="/js/common.js"></script>
     <script src="/js/posts.js"></script>
     <script src="/js/memos.js"></script>
+    <script src="/js/gallery.js"></script>
     <script src="/js/deploy.js"></script>
     <script src="/js/main.js"></script>
 </body>

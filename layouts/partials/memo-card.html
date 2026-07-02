@@ -34,7 +34,7 @@
     </div>
 
     {{- with $images -}}
-    <div class="timeplus-memo-gallery {{ $gridClass }}">
+    <div class="timeplus-memo-gallery memo-gallery {{ $gridClass }}">
       {{- range . -}}
       <a href="{{ . | absURL }}" target="_blank" rel="noopener noreferrer" class="timeplus-gallery-item">
         <img src="{{ . | absURL }}" loading="lazy" alt="memo photo">

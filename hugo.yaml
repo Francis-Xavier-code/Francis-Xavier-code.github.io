@@ -210,6 +210,10 @@ menu:
       name: 瞬间
       url: /memos/
       weight: 15
+    - identifier: gallery
+      name: 图库
+      url: /gallery/
+      weight: 18
     - identifier: tags
       name: 标签
       url: /tags/
