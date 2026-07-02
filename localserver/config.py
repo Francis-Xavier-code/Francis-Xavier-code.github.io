@@ -16,8 +16,10 @@ WEB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 HOST = "127.0.0.1"
 PORT = 5000
 
-# 允许上传的图片扩展名
+# 允许上传的媒体扩展名
 ALLOWED_IMG_EXT = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+ALLOWED_VIDEO_EXT = {".mp4", ".webm", ".mov", ".m4v"}
+ALLOWED_MEDIA_EXT = ALLOWED_IMG_EXT | ALLOWED_VIDEO_EXT
 
 
 def ensure_dirs():

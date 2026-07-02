@@ -1,4 +1,4 @@
-// 独立图片库管理
+// 独立媒体库管理
 
 let selectedPhotoFiles = [];
 let editingPhotoId = '';
@@ -18,10 +18,21 @@ function renderPhotoPreviews() {
         const item = document.createElement('div');
         item.className = 'preview-item';
 
-        const img = document.createElement('img');
-        img.className = 'preview-img';
-        img.src = URL.createObjectURL(file);
-        img.onload = () => URL.revokeObjectURL(img.src);
+        const url = URL.createObjectURL(file);
+        const preview = file.type.startsWith('video/')
+            ? document.createElement('video')
+            : document.createElement('img');
+        preview.className = 'preview-img';
+        preview.src = url;
+        if (file.type.startsWith('video/')) {
+            preview.muted = true;
+            preview.playsInline = true;
+        }
+        if (file.type.startsWith('video/')) {
+            preview.onloadedmetadata = () => URL.revokeObjectURL(url);
+        } else {
+            preview.onload = () => URL.revokeObjectURL(url);
+        }
 
         const remove = document.createElement('span');
         remove.className = 'preview-remove';
@@ -31,7 +42,7 @@ function renderPhotoPreviews() {
             renderPhotoPreviews();
         };
 
-        item.appendChild(img);
+        item.appendChild(preview);
         item.appendChild(remove);
         container.appendChild(item);
     });
@@ -50,16 +61,13 @@ function addPhotoFiles(files) {
 
 function buildPhotoFormData() {
     if (!editingPhotoId && selectedPhotoFiles.length === 0) {
-        showToast('请先选择要上传的图片', true);
+        showToast('请先选择要上传的图片或视频', true);
         return null;
     }
     const formData = new FormData();
     formData.append('title', document.getElementById('photo-title').value.trim());
     formData.append('date', document.getElementById('photo-date').value);
-    formData.append('location', document.getElementById('photo-location').value.trim());
     formData.append('visibility', document.getElementById('photo-visibility').value);
-    formData.append('tags', document.getElementById('photo-tags').value.trim());
-    formData.append('description', document.getElementById('photo-description').value.trim());
     selectedPhotoFiles.forEach(file => formData.append('images', file));
     return formData;
 }
@@ -70,10 +78,10 @@ async function loadPhotos() {
     try {
         const photos = await apiRequest('/api/photos');
         list.innerHTML = '';
-        count.innerText = `${photos.length} 张`;
+        count.innerText = `${photos.length} 个`;
 
         if (photos.length === 0) {
-            list.innerHTML = '<div class="empty-state"><span class="empty-icon">📸</span>还没有独立图片，在左侧上传第一张吧</div>';
+            list.innerHTML = '<div class="empty-state"><span class="empty-icon">📸</span>还没有媒体，在左侧上传第一个吧</div>';
             return;
         }
 
@@ -91,21 +99,21 @@ async function loadPhotos() {
 }
 
 function renderPhotoCard(photo) {
-    const tags = Array.isArray(photo.tags) ? photo.tags : [];
     const privateBadge = photo.visibility === 'private' ? '<span class="memo-state private">私密</span>' : '<span class="memo-state">公开</span>';
+    const media = photo.type === 'video'
+        ? `<video src="${escapeHtml(photo.src)}" muted controls preload="metadata"></video>`
+        : `<img src="${escapeHtml(photo.src)}" alt="">`;
     return `
         <a href="${escapeHtml(photo.src)}" target="_blank" rel="noopener noreferrer" class="photo-admin-cover">
-            <img src="${escapeHtml(photo.src)}" alt="">
+            ${media}
         </a>
         <div class="photo-admin-body">
             <div class="photo-admin-title">${escapeHtml(photo.title || '未命名图片')}</div>
             <div class="photo-admin-meta">
                 ${privateBadge}
                 <span>${escapeHtml(formatMemoDate(photo.date))}</span>
-                ${photo.location ? `<span>${escapeHtml(photo.location)}</span>` : ''}
+                <span>${escapeHtml(photo.originalName || photo.filename || '')}</span>
             </div>
-            ${photo.description ? `<div class="photo-admin-desc">${escapeHtml(photo.description)}</div>` : ''}
-            ${tags.length ? `<div class="photo-admin-tags">${tags.map(tag => `<span>#${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
             <div class="actions">
                 <button class="btn btn-secondary btn-icon" data-edit-photo>编辑</button>
                 <button class="btn btn-danger btn-icon" data-delete-photo>删除</button>
@@ -121,8 +129,8 @@ function resetPhotoForm() {
     selectedPhotoFiles = [];
     renderPhotoPreviews();
     setDefaultPhotoDate();
-    document.getElementById('photo-submit-btn').innerText = '上传图片';
-    document.getElementById('photo-upload-label').innerText = '上传原图（可多选）';
+    document.getElementById('photo-submit-btn').innerText = '上传媒体';
+    document.getElementById('photo-upload-label').innerText = '上传图片 / 视频（可多选）';
     document.getElementById('photo-images-input').multiple = true;
 }
 
@@ -132,12 +140,9 @@ function editPhoto(photo) {
     document.getElementById('photo-edit-id').value = photo.id;
     document.getElementById('photo-title').value = photo.title || '';
     document.getElementById('photo-date').value = toLocalInputValue(photo.date);
-    document.getElementById('photo-location').value = photo.location || '';
     document.getElementById('photo-visibility').value = photo.visibility || 'public';
-    document.getElementById('photo-tags').value = Array.isArray(photo.tags) ? photo.tags.join(' ') : '';
-    document.getElementById('photo-description').value = photo.description || '';
     document.getElementById('photo-submit-btn').innerText = '保存图片';
-    document.getElementById('photo-upload-label').innerText = '替换原图（可不选）';
+    document.getElementById('photo-upload-label').innerText = '替换媒体文件（可不选）';
     document.getElementById('photo-images-input').multiple = false;
     renderPhotoPreviews();
     document.getElementById('photo-title').focus();
@@ -157,7 +162,7 @@ async function submitPhoto() {
         const method = isEditing ? 'PUT' : 'POST';
         const data = await apiRequest(url, { method, body: formData });
         if (data.status === 'success') {
-            showToast(isEditing ? '图片已更新！' : `已上传 ${data.count || 1} 张图片！`);
+            showToast(isEditing ? '媒体已更新！' : `已上传 ${data.count || 1} 个媒体！`);
             resetPhotoForm();
             loadPhotos();
         } else {
@@ -172,11 +177,11 @@ async function submitPhoto() {
 }
 
 async function deletePhoto(id) {
-    if (!confirm('确定要删除这张图片吗？原图文件也会一同清理。')) return;
+    if (!confirm('确定要删除这个媒体吗？原文件也会一同清理。')) return;
     try {
         const data = await apiRequest(`/api/photos/${encodeURIComponent(id)}`, { method: 'DELETE' });
         if (data.status === 'success') {
-            showToast('图片已删除！');
+            showToast('媒体已删除！');
             if (editingPhotoId === id) resetPhotoForm();
             loadPhotos();
         } else {
@@ -195,7 +200,7 @@ function initPhotos() {
     dropzone.addEventListener('click', () => input.click());
 
     input.addEventListener('change', (e) => {
-        addPhotoFiles(Array.from(e.target.files).filter(f => f.type.startsWith('image/')));
+        addPhotoFiles(Array.from(e.target.files).filter(isSupportedMediaFile));
         e.target.value = '';
     });
 
@@ -207,9 +212,13 @@ function initPhotos() {
     dropzone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropzone.classList.remove('dragover');
-        addPhotoFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
+        addPhotoFiles(Array.from(e.dataTransfer.files).filter(isSupportedMediaFile));
     });
 
     document.getElementById('photo-submit-btn').addEventListener('click', submitPhoto);
     document.getElementById('photo-reset-btn').addEventListener('click', resetPhotoForm);
+}
+
+function isSupportedMediaFile(file) {
+    return file.type.startsWith('image/') || file.type.startsWith('video/');
 }

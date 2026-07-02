@@ -1,6 +1,6 @@
 {{- define "main" }}
 
-<section class="timeplus-memos-header">
+<section class="memo-stream-header">
   <div>
     <h1>{{ .Title }}</h1>
     {{- with .Description }}
@@ -10,7 +10,7 @@
   <span>{{ len (where .Pages "Params.visibility" "!=" "private") }} 条记录</span>
 </section>
 
-<div class="timeplus-memos-list">
+<div class="memo-stream-list">
   {{- $pages := where .Pages "Params.visibility" "!=" "private" -}}
   {{- $paginator := .Paginate $pages -}}
   {{- range $paginator.Pages }}
@@ -19,7 +19,7 @@
 </div>
 
 {{- if gt $paginator.TotalPages 1 }}
-<footer class="page-footer timeplus-pagination">
+<footer class="page-footer memo-stream-pagination">
   <nav class="pagination">
     {{- if $paginator.HasPrev }}
     <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">较新发布</a>

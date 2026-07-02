@@ -4,7 +4,11 @@
     <span id="lightbox-prev" style="position: absolute; left: 20px; color: white; font-size: 40px; cursor: pointer; background: rgba(255,255,255,0.1); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-family: monospace;">&lt;</span>
     <img id="lightbox-img" src="" alt="preview" style="max-width: 90%; max-height: 90%; object-fit: contain; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border-radius: 4px; transition: transform 0.2s ease;">
     <span id="lightbox-next" style="position: absolute; right: 20px; color: white; font-size: 40px; cursor: pointer; background: rgba(255,255,255,0.1); width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-family: monospace;">&gt;</span>
-    <a id="lightbox-original" href="" target="_blank" rel="noopener noreferrer" style="position: absolute; bottom: 20px; right: 20px; color: white; font-size: 14px; background: rgba(255,255,255,0.12); padding: 6px 12px; border-radius: 20px; text-decoration: none;">打开原图</a>
+    <div id="lightbox-actions" style="position: absolute; bottom: 20px; right: 20px; display: flex; gap: 8px; align-items: center;">
+        <button id="lightbox-share" type="button" style="color: white; font-size: 14px; background: rgba(255,255,255,0.12); padding: 6px 12px; border: 0; border-radius: 20px; cursor: pointer;">分享</button>
+        <a id="lightbox-download" href="" download style="color: white; font-size: 14px; background: rgba(255,255,255,0.12); padding: 6px 12px; border-radius: 20px; text-decoration: none;">下载</a>
+        <a id="lightbox-original" href="" target="_blank" rel="noopener noreferrer" style="color: white; font-size: 14px; background: rgba(255,255,255,0.12); padding: 6px 12px; border-radius: 20px; text-decoration: none;">原图</a>
+    </div>
     <div id="lightbox-index" style="position: absolute; bottom: 20px; color: white; font-size: 14px; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 20px;">1 / 1</div>
 </div>
 
@@ -18,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = document.getElementById('lightbox-next');
     const closeBtn = document.getElementById('lightbox-close');
     const originalBtn = document.getElementById('lightbox-original');
+    const downloadBtn = document.getElementById('lightbox-download');
+    const shareBtn = document.getElementById('lightbox-share');
 
     let currentGallery = [];
     let currentIndex = 0;
@@ -51,8 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateImage() {
         resetZoom();
-        lightboxImg.src = currentGallery[currentIndex];
-        originalBtn.href = currentGallery[currentIndex];
+        const src = currentGallery[currentIndex];
+        lightboxImg.src = src;
+        originalBtn.href = src;
+        downloadBtn.href = src;
+        downloadBtn.download = src.split('/').pop() || 'image';
         lightboxIndex.innerText = `${currentIndex + 1} / ${currentGallery.length}`;
         const multi = currentGallery.length > 1;
         prevBtn.style.display = multi ? 'flex' : 'none';
@@ -65,6 +74,22 @@ document.addEventListener('DOMContentLoaded', () => {
     prevBtn.addEventListener('click', (e) => { e.stopPropagation(); showPrev(); });
     nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showNext(); });
     originalBtn.addEventListener('click', (e) => e.stopPropagation());
+    downloadBtn.addEventListener('click', (e) => e.stopPropagation());
+    shareBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const url = currentGallery[currentIndex];
+        if (navigator.share) {
+            try {
+                await navigator.share({ title: document.title, url });
+                return;
+            } catch (err) {}
+        }
+        if (navigator.clipboard) {
+            await navigator.clipboard.writeText(url);
+            shareBtn.textContent = '已复制';
+            setTimeout(() => { shareBtn.textContent = '分享'; }, 1400);
+        }
+    });
     closeBtn.addEventListener('click', closeLightbox);
     lightbox.addEventListener('click', closeLightbox);
     lightboxImg.addEventListener('click', (e) => e.stopPropagation());

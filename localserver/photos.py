@@ -7,7 +7,7 @@ import uuid
 from email.parser import BytesParser
 from email.policy import default
 
-from config import ALLOWED_IMG_EXT, PHOTOS_DATA_FILE, STATIC_PHOTOS_IMG_DIR
+from config import ALLOWED_IMG_EXT, ALLOWED_MEDIA_EXT, ALLOWED_VIDEO_EXT, PHOTOS_DATA_FILE, STATIC_PHOTOS_IMG_DIR
 
 
 def _parse_multipart(content_type, data_bytes):
@@ -56,10 +56,6 @@ def _save_photos(photos):
         f.write("\n")
 
 
-def _parse_tags(raw):
-    return [tag.strip() for tag in re.split(r"[,，\s]+", raw or "") if tag.strip()]
-
-
 def _normalize_datetime(raw):
     if not raw:
         return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S+08:00")
@@ -76,20 +72,18 @@ def _normalize_datetime(raw):
 def _metadata_from_fields(fields):
     return {
         "title": (fields.get("title") or "").strip(),
-        "description": (fields.get("description") or "").strip(),
         "date": _normalize_datetime(fields.get("date", "")),
-        "location": (fields.get("location") or "").strip(),
-        "tags": _parse_tags(fields.get("tags") or ""),
         "visibility": (fields.get("visibility") or "public").strip() or "public",
     }
 
 
 def _store_photo(original_filename, payload, prefix):
     ext = os.path.splitext(original_filename)[1].lower()
-    if ext not in ALLOWED_IMG_EXT or not payload:
+    if ext not in ALLOWED_MEDIA_EXT or not payload:
         return None
+    media_type = "video" if ext in ALLOWED_VIDEO_EXT else "image"
     safe_id = f"{prefix}-{uuid.uuid4().hex[:8]}"
-    filename = f"photo-{safe_id}{ext}"
+    filename = f"media-{safe_id}{ext}"
     target_path = os.path.join(STATIC_PHOTOS_IMG_DIR, filename)
     os.makedirs(STATIC_PHOTOS_IMG_DIR, exist_ok=True)
     with open(target_path, "wb") as f:
@@ -100,6 +94,7 @@ def _store_photo(original_filename, payload, prefix):
         "filename": filename,
         "originalName": os.path.basename(original_filename),
         "size": len(payload),
+        "type": media_type,
     }
 
 
@@ -149,8 +144,6 @@ def create_photos(content_type, content_length, rfile):
             **meta,
             "createdAt": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S+08:00"),
         }
-        if not item["title"]:
-            item["title"] = os.path.splitext(item["originalName"])[0]
         photos.append(item)
         created.append(item)
 
@@ -184,9 +177,6 @@ def update_photo(photo_id, content_type, content_length, rfile):
         if stored:
             _delete_photo_file(photo.get("src", ""))
             photo.update(stored)
-
-    if not photo.get("title"):
-        photo["title"] = os.path.splitext(photo.get("originalName", "未命名图片"))[0]
 
     photos[index] = photo
     photos.sort(key=lambda x: x.get("date", ""), reverse=True)

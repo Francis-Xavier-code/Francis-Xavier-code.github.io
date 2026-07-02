@@ -724,7 +724,8 @@ select.form-control {
     overflow: hidden;
 }
 
-.photo-admin-cover img {
+.photo-admin-cover img,
+.photo-admin-cover video {
     display: block;
     width: 100%;
     height: 100%;
@@ -732,7 +733,8 @@ select.form-control {
     transition: transform 0.24s ease;
 }
 
-.photo-admin-card:hover .photo-admin-cover img {
+.photo-admin-card:hover .photo-admin-cover img,
+.photo-admin-card:hover .photo-admin-cover video {
     transform: scale(1.04);
 }
 

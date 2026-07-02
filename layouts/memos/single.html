@@ -1,10 +1,10 @@
 {{- define "main" }}
 
-<div class="timeplus-back">
+<div class="memo-stream-back">
   <a href="{{ "/memos/" | relLangURL }}">返回瞬间流</a>
 </div>
 
-<div class="timeplus-memos-list single">
+<div class="memo-stream-list single">
   {{- partial "memo-card.html" (dict "page" . "showComments" false) -}}
 </div>
 

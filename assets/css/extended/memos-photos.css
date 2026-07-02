@@ -1,0 +1,278 @@
+/* Stable memos stream */
+.memo-stream-header,
+.photos-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.memo-stream-header h1,
+.photos-page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.memo-stream-header p,
+.photos-page-header p {
+    margin: 0.35rem 0 0;
+    color: var(--secondary);
+    font-size: 0.95rem;
+}
+
+.memo-stream-header > span,
+.photos-page-header > span {
+    color: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.28rem 0.7rem;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.memo-stream-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.memo-stream-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--entry);
+    padding: 1rem;
+}
+
+.memo-stream-head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+
+.memo-stream-head img {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: var(--code-bg);
+}
+
+.memo-stream-head strong {
+    display: block;
+    color: var(--primary);
+    font-size: 0.98rem;
+}
+
+.memo-stream-head p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.1rem 0 0;
+    color: var(--secondary);
+    font-size: 0.78rem;
+}
+
+.memo-stream-content {
+    color: var(--content);
+    line-height: 1.75;
+    font-size: 0.96rem;
+    word-break: break-word;
+}
+
+.memo-stream-content p {
+    margin: 0 0 0.65rem;
+}
+
+.memo-stream-content p:last-child {
+    margin-bottom: 0;
+}
+
+.memo-stream-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.42rem;
+    max-width: 520px;
+    margin-top: 0.9rem;
+}
+
+.memo-stream-gallery.grid-1 {
+    grid-template-columns: minmax(0, 360px);
+}
+
+.memo-stream-gallery.grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 360px;
+}
+
+.memo-stream-photo {
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--code-bg);
+    aspect-ratio: 1 / 1;
+}
+
+.memo-stream-gallery.grid-1 .memo-stream-photo {
+    aspect-ratio: auto;
+}
+
+.memo-stream-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.22s ease;
+}
+
+.memo-stream-gallery.grid-1 img {
+    max-height: 420px;
+    height: auto;
+    object-fit: contain;
+}
+
+.memo-stream-photo:hover img {
+    transform: scale(1.035);
+}
+
+.memo-stream-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.85rem;
+    color: var(--secondary);
+    font-size: 0.82rem;
+}
+
+.memo-stream-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.memo-stream-tags span {
+    color: var(--accent-color);
+}
+
+.memo-stream-comment,
+.memo-stream-back a {
+    color: var(--secondary);
+    text-decoration: none;
+}
+
+.memo-stream-comment:hover,
+.memo-stream-back a:hover {
+    color: var(--accent-color);
+}
+
+.memo-stream-back {
+    margin-bottom: 1rem;
+}
+
+.memo-stream-pagination .pagination {
+    margin-top: 1.5rem;
+}
+
+/* Beauty media grid */
+.beauty-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.55rem;
+    align-items: stretch;
+}
+
+.beauty-photo-item {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--code-bg);
+    aspect-ratio: 3 / 4;
+}
+
+.beauty-photo-item img,
+.beauty-photo-item video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.beauty-photo-item img {
+    transition: transform 0.22s ease, filter 0.22s ease;
+}
+
+.beauty-photo-item:hover img {
+    transform: scale(1.035);
+    filter: brightness(1.06);
+}
+
+.beauty-photo-item span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.65rem 0.7rem;
+    color: #fff;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
+}
+
+.beauty-video-item {
+    border: 1px solid var(--border);
+}
+
+.beauty-media-actions {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    display: flex;
+    gap: 0.4rem;
+}
+
+.beauty-media-actions a,
+.beauty-media-actions button {
+    color: #fff;
+    background: rgba(0, 0, 0, 0.58);
+    border: 0;
+    border-radius: 999px;
+    padding: 0.25rem 0.55rem;
+    text-decoration: none;
+    font-size: 0.76rem;
+    cursor: pointer;
+}
+
+.photos-empty {
+    color: var(--secondary);
+    text-align: center;
+    padding: 3rem 1rem;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+}
+
+@media (max-width: 700px) {
+    .memo-stream-header,
+    .photos-page-header,
+    .memo-stream-foot {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .memo-stream-card {
+        padding: 0.9rem;
+    }
+
+    .memo-stream-gallery {
+        max-width: none;
+    }
+
+    .beauty-photo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.45rem;
+    }
+}

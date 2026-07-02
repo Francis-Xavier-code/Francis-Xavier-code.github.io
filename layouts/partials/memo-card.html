@@ -9,50 +9,41 @@
   {{- $gridClass = "grid-2" -}}
 {{- end -}}
 
-<article class="timeplus-memo-card">
-  <div class="timeplus-memo-rail">
-    <time datetime="{{ $page.Date.Format "2006-01-02T15:04:05Z07:00" }}">
-      <span>{{ $page.Date.Format "01.02" }}</span>
-      <small>{{ $page.Date.Format "15:04" }}</small>
-    </time>
+<article class="memo-stream-card">
+  <header class="memo-stream-head">
+    <img src="{{ site.Params.profileMode.imageUrl | default "/img/avatar.png" | absURL }}" alt="{{ site.Params.profileMode.title | default "Xynrin" }}">
+    <div>
+      <strong>{{ site.Params.profileMode.title | default "Xynrin" }}</strong>
+      <p>
+        <time datetime="{{ $page.Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ $page.Date.Format "2006年01月02日 15:04" }}</time>
+        {{- with $page.Params.location }}<span>{{ . }}</span>{{ end -}}
+      </p>
+    </div>
+  </header>
+
+  <div class="memo-stream-content md-content">
+    {{ $page.Content }}
   </div>
 
-  <div class="timeplus-memo-panel">
-    <header class="timeplus-memo-author">
-      <img src="{{ site.Params.profileMode.imageUrl | default "/img/avatar.png" | absURL }}" alt="{{ site.Params.profileMode.title | default "Xynrin" }}">
-      <div>
-        <strong>{{ site.Params.profileMode.title | default "Xynrin" }}</strong>
-        <p>
-          {{ $page.Date.Format "2006年01月02日 15:04" }}
-          {{- with $page.Params.location }} · {{ . }}{{ end -}}
-        </p>
-      </div>
-    </header>
-
-    <div class="timeplus-memo-content md-content">
-      {{ $page.Content }}
-    </div>
-
-    {{- with $images -}}
-    <div class="timeplus-memo-gallery memo-gallery {{ $gridClass }}">
-      {{- range . -}}
-      <a href="{{ . | absURL }}" target="_blank" rel="noopener noreferrer" class="timeplus-gallery-item">
-        <img src="{{ . | absURL }}" loading="lazy" alt="memo photo">
-      </a>
-      {{- end -}}
-    </div>
+  {{- with $images -}}
+  <div class="memo-stream-gallery memo-gallery {{ $gridClass }}">
+    {{- range . -}}
+    <a href="{{ . | absURL }}" target="_blank" rel="noopener noreferrer" class="memo-stream-photo">
+      <img src="{{ . | absURL }}" loading="lazy" alt="memo photo">
+    </a>
     {{- end -}}
-
-    <footer class="timeplus-memo-footer">
-      <div class="timeplus-memo-tags">
-        {{- with $page.Params.mood }}<span>{{ . }}</span>{{ end -}}
-        {{- range $page.Params.tags }}<span>#{{ . }}</span>{{ end -}}
-      </div>
-      {{- if $showComments -}}
-      <a href="{{ $page.Permalink }}#twikoo-container" class="timeplus-comment-link">
-        评论 <span class="twikoo-comment-count" data-path="{{ $page.RelPermalink }}">0</span>
-      </a>
-      {{- end -}}
-    </footer>
   </div>
+  {{- end -}}
+
+  <footer class="memo-stream-foot">
+    <div class="memo-stream-tags">
+      {{- with $page.Params.mood }}<span>{{ . }}</span>{{ end -}}
+      {{- range $page.Params.tags }}<span>#{{ . }}</span>{{ end -}}
+    </div>
+    {{- if $showComments -}}
+    <a href="{{ $page.Permalink }}#twikoo-container" class="memo-stream-comment">
+      评论 <span class="twikoo-comment-count" data-path="{{ $page.RelPermalink }}">0</span>
+    </a>
+    {{- end -}}
+  </footer>
 </article>

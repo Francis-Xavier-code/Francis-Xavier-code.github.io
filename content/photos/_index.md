@@ -1,5 +1,5 @@
 ---
-title: "图片"
-description: "独立上传与收藏的原图照片。"
+title: "美女"
+description: "图片和视频收藏。"
 layout: "list"
 ---
