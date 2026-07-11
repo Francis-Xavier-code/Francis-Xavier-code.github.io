@@ -22,37 +22,18 @@ outputFormats:
     baseName: feed
 
 pagination:
-  pagerSize: 6
+  pagerSize: 10
 
 permalinks:
   post: /p/:slug/
   page: /:slug/
 
 params:
-  ShowWordCount: true
-  ShowReadingTime: true
   ShowCodeCopyButtons: true
-  ShowToc: true
-  TocOpen: true
-  profileMode:
-    enabled: true
-    title: Xynrin
-    subtitle: 生命不止，折腾不息
-    imageUrl: /img/avatar.png
-    imageTitle: "Xynrin"
-    imageWidth: 120
-    imageHeight: 120
-
-  socialIcons:
-    - name: github
-      url: https://github.com/Xynrin
-    - name: email
-      url: mailto:xynrin@163.com
-    - name: bilibili
-      url: https://space.bilibili.com/1198508132
-    - name: rss
-      url: /feed.xml
-
+  disableSpecial1stPost: true
+  homeInfoParams:
+    Title: "最近文章"
+    Content: "记录技术折腾与日常思考。"
   mainSections:
     - post
   featuredImageField: image
@@ -63,134 +44,23 @@ params:
     favicon: img/favicon.png
   description: "Xynrin的个人博客，记录技术折腾与日常思考。"
 
-  sidebarBanner:
-    image: img/my-linux-do.png
-
-  since: "2026-05-19"
-
-  hero:
-    enabled: true
-    title: 'XYNRIN<span class="hero-accent">·</span>BLOG'
-    subtitle: '记录折腾，留下痕迹'
-    typing:
-      - "用代码丈量世界"
-      - "用文字凝固时间"
-      - "Stay curious, stay foolish"
-
-  reward:
-    enabled: true
-    comment: "如果觉得有帮助，请我喝杯咖啡 ☕"
-    image: img/zan-shang.png
-
-  footer:
-    since: 2026
-
   DateFormat: "2006年01月02日"
-
-  sidebar:
-    emoji: "✨"
-    subtitle: xynrin的个人博客
-    avatar: img/avatar.png
-
-  article:
-    math: true
-    toc: true
-    readingTime: true
-    license:
-      enabled: true
-      default: 知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议
-
-  comments:
-    enabled: true
-    provider: giscus
-    giscus:
-      repo: Xynrin/Xynrin.github.io
-      repoID: R_kgDOSiCzDA
-      category: Announcements
-      categoryID: DIC_kwDOSiCzDM4C9Z8_
-      mapping: pathname
-      lightTheme: light
-      darkTheme: transparent_dark
-
-      reactionsEnabled: 1
-      emitMetadata: 0
-      inputPosition: top
-      lang: zh-CN
-      loading: lazy
-
-  # 瞬间（memos）使用 Twikoo 作为评论后端。访客无需登录即可匿名评论。
-  # 后端可用腾讯云开发 CloudBase（自带数据库，国内快、免备案）或 Vercel。
-  # 部署后把环境 ID / 访问地址填入 envId 即可启用。
-  # 未填写时前端会自动隐藏评论区与计数，不影响页面其余部分。
-  twikoo:
-    envId: ""              # CloudBase 环境ID，或 Vercel/私有部署的访问URL
-    region: ap-shanghai    # CloudBase 环境地域，Vercel/URL 部署时留空即可
-    lang: zh-CN
 
   analytics:
     google:
       SiteVerificationTag: "2dTPklx6cOydPSINuCHxypLaCezdhnuyPBVY7rd189s"
-    busuanzi:
-      enabled: true
 
-  adsense:
-    enabled: true
-    client: "ca-pub-7294159431010200"
-    articleSlot: "" # 填入 AdSense 广告单元的 data-ad-slot，留空则不在文章内显示广告位
-
-  widgets:
-    homepage:
-      - type: search
-      - type: archives
-        params:
-          limit: 5
-      - type: categories
-        params:
-          limit: 10
-      - type: tag-cloud
-        params:
-          limit: 10
-      - type: rss-qr
-    page:
-      - type: toc
-
-  opengraph:
-    twitter:
-      site: ""
-      card: summary_large_image
-
-  defaultImage:
-    opengraph:
-      enabled: false
-      local: false
-      src: ""
-
-  disableThemeToggle: true
-  defaultTheme: dark
+  disableThemeToggle: false
+  defaultTheme: auto
 
   cover:
     hiddenInList: true
     hiddenInSingle: true
 
-
-related:
-  includeNewer: true
-  threshold: 60
-  toLower: false
-  indices:
-    - name: tags
-      weight: 100
-    - name: categories
-      weight: 200
-
 markup:
   goldmark:
     renderer:
       unsafe: true
-  tableOfContents:
-    endLevel: 4
-    ordered: true
-    startLevel: 2
   highlight:
     noClasses: false
     codeFences: true
@@ -202,33 +72,16 @@ markup:
 
 menu:
   main:
-    - identifier: posts
-      name: 文章
+    - identifier: archives
+      name: 归档
       url: /archives/
       weight: 10
-    - identifier: memos
-      name: 瞬间
-      url: /memos/
-      weight: 15
-    - identifier: photos
-      name: 美女
-      url: /photos/
-      weight: 18
-    - identifier: tags
-      name: 标签
-      url: /tags/
-      weight: 20
-
     - identifier: about
       name: 关于
       url: /about/
-      weight: 30
-    - identifier: friends
-      name: 朋友
-      url: /friends/
-      weight: 35
+      weight: 20
     - identifier: search
       name: 搜索
       url: /search/
-      weight: 40
+      weight: 30
 

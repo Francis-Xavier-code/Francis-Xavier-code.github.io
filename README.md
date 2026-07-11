@@ -8,11 +8,10 @@ Welcome to the source code repository for [Xynrin's Blog](https://Xynrin.github.
 - **Deployment**: GitHub Pages & GitHub Actions
 
 ## Features
-- **Profile Mode**: Minimalist homepage design focused on the author.
-- **Archive System**: Automatic year-month organization for easy browsing.
-- **Custom Fonts**: Uses Inter & Noto Sans SC for a clean, modern aesthetic.
-- **Analytics**: Busuanzi integrated into the footer for site visits & pageviews.
-- **Comment System**: Powered by Giscus (GitHub Discussions).
+- **Article-first**: The homepage lists recent articles directly.
+- **Focused navigation**: Archives, About, and Search only.
+- **Responsive reading**: A clean PaperMod-based layout for desktop and mobile.
+- **Local writing tools**: A small local interface for article management and publishing.
 
 ## License
 This blog's source code is licensed under the [GPL-3.0 License](LICENSE).

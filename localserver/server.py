@@ -1,7 +1,7 @@
 """Xynrin 博客本地管理后台 —— HTTP 服务入口。
 
 职责仅限于：路由分发、静态文件服务、请求/响应封装。
-具体业务逻辑分别在 posts / memos / deploy 模块中。
+具体业务逻辑分别在 posts / deploy 模块中。
 """
 import os
 import json
@@ -11,8 +11,6 @@ from urllib.parse import urlparse, unquote
 
 import config
 import posts
-import memos
-import photos
 import deploy
 
 # 静态文件扩展名 -> MIME
@@ -100,28 +98,6 @@ class AdminHTTPHandler(BaseHTTPRequestHandler):
         with open(full_path, "rb") as f:
             self.send_bytes(f.read(), mime)
 
-    def serve_memo_image(self, path):
-        img_filename = os.path.basename(unquote(path))
-        img_path = os.path.join(config.STATIC_MEMOS_IMG_DIR, img_filename)
-        if os.path.isfile(img_path):
-            ext = os.path.splitext(img_path)[1].lower()
-            mime = MIME_TYPES.get(ext, "image/png")
-            with open(img_path, "rb") as f:
-                self.send_bytes(f.read(), mime)
-        else:
-            self.send_status(404)
-
-    def serve_photo_image(self, path):
-        img_filename = os.path.basename(unquote(path))
-        img_path = os.path.join(config.STATIC_PHOTOS_IMG_DIR, img_filename)
-        if os.path.isfile(img_path):
-            ext = os.path.splitext(img_path)[1].lower()
-            mime = MIME_TYPES.get(ext, "image/png")
-            with open(img_path, "rb") as f:
-                self.send_bytes(f.read(), mime)
-        else:
-            self.send_status(404)
-
     # ---------- 路由 ----------
     def do_OPTIONS(self):
         self.send_response(200)
@@ -136,14 +112,6 @@ class AdminHTTPHandler(BaseHTTPRequestHandler):
 
         if path == "/api/posts":
             self.send_json(posts.get_all_posts_list())
-        elif path == "/api/memos":
-            self.send_json(memos.get_all_memos_list())
-        elif path == "/api/photos":
-            self.send_json(photos.get_all_photos())
-        elif path.startswith("/img/memos/"):
-            self.serve_memo_image(path)
-        elif path.startswith("/img/photos/"):
-            self.serve_photo_image(path)
         else:
             # 其余一律当作静态资源（含首页 index.html）
             self.serve_static(path)
@@ -161,35 +129,8 @@ class AdminHTTPHandler(BaseHTTPRequestHandler):
         elif path.startswith("/api/posts/edit/"):
             slug = path.rsplit("/", 1)[-1]
             self.send_json(*posts.edit_post(slug))
-        elif path == "/api/memos":
-            content_type = self.headers.get("Content-Type")
-            length = int(self.headers.get("Content-Length", 0))
-            self.send_json(*memos.create_memo(content_type, length, self.rfile))
-        elif path == "/api/photos":
-            content_type = self.headers.get("Content-Type")
-            length = int(self.headers.get("Content-Length", 0))
-            self.send_json(*photos.create_photos(content_type, length, self.rfile))
         elif path == "/api/deploy":
             self.send_json(*deploy.run_deploy())
-        else:
-            self.send_status(404)
-
-    def do_PUT(self):
-        if not self.is_same_origin_request():
-            self.send_json({"status": "error", "message": "拒绝跨站请求"}, 403)
-            return
-        path = unquote(urlparse(self.path).path)
-
-        if path.startswith("/api/memos/"):
-            filename = path.rsplit("/", 1)[-1]
-            content_type = self.headers.get("Content-Type")
-            length = int(self.headers.get("Content-Length", 0))
-            self.send_json(*memos.update_memo(filename, content_type, length, self.rfile))
-        elif path.startswith("/api/photos/"):
-            photo_id = path.rsplit("/", 1)[-1]
-            content_type = self.headers.get("Content-Type")
-            length = int(self.headers.get("Content-Length", 0))
-            self.send_json(*photos.update_photo(photo_id, content_type, length, self.rfile))
         else:
             self.send_status(404)
 
@@ -202,12 +143,6 @@ class AdminHTTPHandler(BaseHTTPRequestHandler):
         if path.startswith("/api/posts/"):
             slug = path.rsplit("/", 1)[-1]
             self.send_json(*posts.delete_post(slug))
-        elif path.startswith("/api/memos/"):
-            filename = path.rsplit("/", 1)[-1]
-            self.send_json(*memos.delete_memo(filename))
-        elif path.startswith("/api/photos/"):
-            photo_id = path.rsplit("/", 1)[-1]
-            self.send_json(*photos.delete_photo(photo_id))
         else:
             self.send_status(404)
 
