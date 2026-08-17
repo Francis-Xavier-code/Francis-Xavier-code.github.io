@@ -31,9 +31,25 @@ permalinks:
 params:
   ShowCodeCopyButtons: true
   disableSpecial1stPost: true
-  homeInfoParams:
-    Title: "最近文章"
-    Content: "记录技术折腾与日常思考。"
+  profileMode:
+    enabled: true
+    title: Black Cat
+    subtitle: 生命不止，折腾不息
+    imageUrl: /img/avatar.png
+    imageTitle: "Black Cat"
+    imageWidth: 120
+    imageHeight: 120
+
+  socialIcons:
+    - name: github
+      url: https://github.com/Francis-Xavier-code
+    - name: email
+      url: mailto:xynrin@163.com
+    - name: bilibili
+      url: https://space.bilibili.com/1198508132
+    - name: rss
+      url: /feed.xml
+
   mainSections:
     - post
   featuredImageField: image
