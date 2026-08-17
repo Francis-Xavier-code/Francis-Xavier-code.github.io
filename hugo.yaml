@@ -19,7 +19,7 @@ outputFormats:
     isPlainText: true
   RSS:
     mediaType: application/rss+xml
-    baseName: feed
+    baseName: rss
 
 pagination:
   pagerSize: 10
@@ -48,7 +48,7 @@ params:
     - name: bilibili
       url: https://space.bilibili.com/1198508132
     - name: rss
-      url: /feed.xml
+      url: /rss.xml
 
   mainSections:
     - post
