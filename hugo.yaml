@@ -34,7 +34,7 @@ params:
   profileMode:
     enabled: true
     title: Black Cat
-    subtitle: 生命不止，折腾不息
+    subtitle: 生命不止，折腾不息<br>Life goes on, and so does the struggle.
     imageUrl: /img/avatar.png
     imageTitle: "Black Cat"
     imageWidth: 120
