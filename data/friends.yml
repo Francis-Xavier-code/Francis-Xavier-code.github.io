@@ -1,4 +1,4 @@
-- name: "Dejavu's Blog"
-  url: 'https://blog.dejavu.moe/'
-  avatar: 'https://blog.dejavu.moe/avatar.webp'
-  description: "Just for fun."
+- name: "web site"
+  url: 'web url'
+  avatar: 'web url/avatar_image'
+  description: "like Code."
