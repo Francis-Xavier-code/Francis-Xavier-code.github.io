@@ -44,7 +44,7 @@ def is_nothing_to_commit(res):
     return "nothing to commit" in text or "无文件要提交" in text or "没有要提交" in text
 
 
-print_header("🚀 Xynrin's Blog - 一键发布部署 🚀")
+print_header("🚀 Black Cat's Blog - 一键发布部署 🚀")
 
 print_step("正在分析本地文件变更...")
 res = run_cmd(["git", "add", "."])
@@ -78,7 +78,7 @@ print_success("代码推送完成！")
 # GitHub Actions status checking
 import webbrowser
 
-REPO = "Xynrin/Xynrin.github.io"
+REPO = "Francis-Xavier-code/Francis-Xavier-code.github.io"
 print_step("正在通过浏览器打开 GitHub Actions 面板...")
 try:
     webbrowser.open(f"https://github.com/{REPO}/actions")

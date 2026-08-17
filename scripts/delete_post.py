@@ -26,7 +26,7 @@ def print_error(msg):
 def prompt_input(msg):
     return input(f"{C_YELLOW}➤{C_RESET} {msg}").strip()
 
-print_header("🗑️ Xynrin's Blog - 删除文章 🗑️")
+print_header("🗑️ Black Cat's Blog - 删除文章 🗑️")
 
 post_dir = os.path.join("content", "post")
 if not os.path.exists(post_dir):

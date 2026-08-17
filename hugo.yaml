@@ -1,8 +1,8 @@
-baseURL: https://xynrin.github.io
+baseURL: https://Francis-Xavier-code.github.io
 locale: zh-cn
 defaultContentLanguage: zh-cn
 hasCJKLanguage: true
-title: "Xynrin's Blog"
+title: "Black Cat's Blog"
 theme: PaperMod
 
 outputs:
@@ -42,7 +42,7 @@ params:
   favicon: img/favicon.png
   assets:
     favicon: img/favicon.png
-  description: "Xynrin的个人博客，记录技术折腾与日常思考。"
+  description: "Black Cat 的个人博客，记录技术折腾与日常思考。"
 
   DateFormat: "2006年01月02日"
 

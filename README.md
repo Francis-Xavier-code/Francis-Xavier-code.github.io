@@ -1,6 +1,6 @@
-# Xynrin's Blog
+# Black Cat's Blog
 
-Welcome to the source code repository for [Xynrin's Blog](https://Xynrin.github.io).
+Welcome to the source code repository for [Black Cat's Blog](https://Francis-Xavier-code.github.io).
 
 ## Tech Stack
 - **Framework**: [Hugo](https://gohugo.io/)

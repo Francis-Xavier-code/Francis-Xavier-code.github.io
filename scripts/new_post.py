@@ -29,7 +29,7 @@ def print_error(msg):
 def prompt_input(msg):
     return input(f"{C_YELLOW}➤{C_RESET} {msg}").strip()
 
-print_header("✨ Xynrin's Blog - 新建文章 ✨")
+print_header("✨ Black Cat's Blog - 新建文章 ✨")
 
 folder_name = prompt_input("1. 请输入文章缩写 (英文/拼音, 将作为文件夹名和网址): ")
 folder_name = re.sub(r"[^a-zA-Z0-9-]", "", folder_name.replace(" ", "-")).lower()

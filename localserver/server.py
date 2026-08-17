@@ -1,4 +1,4 @@
-"""Xynrin 博客本地管理后台 —— HTTP 服务入口。
+"""Black Cat 博客本地管理后台 —— HTTP 服务入口。
 
 职责仅限于：路由分发、静态文件服务、请求/响应封装。
 具体业务逻辑分别在 posts / deploy 模块中。
@@ -152,7 +152,7 @@ def run_server():
     address = (config.HOST, config.PORT)
     httpd = ThreadingHTTPServer(address, AdminHTTPHandler)
     url = f"http://{config.HOST}:{config.PORT}"
-    print(f"Xynrin Blog Admin is running at {url}")
+    print(f"Black Cat Blog Admin is running at {url}")
     webbrowser.open(url)
     try:
         httpd.serve_forever()

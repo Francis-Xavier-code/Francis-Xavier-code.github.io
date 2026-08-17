@@ -11,7 +11,7 @@ tags:
   - 随记
 draft: false
 ---
-## 欢迎来到 XYNRIN-BLOG
+## 欢迎来到 Black Cat BLOG
 
 这是博客的第一篇文章。我打算在这里记录：
 
