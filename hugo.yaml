@@ -88,9 +88,9 @@ markup:
 
 menu:
   main:
-    - identifier: archives
-      name: 归档
-      url: /archives/
+    - identifier: post
+      name: 文章
+      url: /post/
       weight: 10
     - identifier: about
       name: 关于
