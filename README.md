@@ -1,6 +1,7 @@
 # Black Cat's Blog
 
 Welcome to the source code repository for [Black Cat's Blog](https://Francis-Xavier-code.github.io).
+You can frok.
 
 ## Tech Stack
 - **Framework**: [Hugo](https://gohugo.io/)
